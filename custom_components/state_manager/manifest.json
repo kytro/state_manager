@@ -1,0 +1,10 @@
+{
+  "domain": "state_manager",
+  "name": "State Manager",
+  "documentation": "https://github.com/kytro/state_manager",
+  "dependencies": [],
+  "codeowners": [ "@kytro" ],
+  "requirements": [],
+  "config_flow": false,
+  "version": "0.1.0"
+}
