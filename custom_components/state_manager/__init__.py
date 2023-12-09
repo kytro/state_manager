@@ -22,7 +22,7 @@ RELATED_ENTITY_SCHEMA = vol.Schema({
 DEVICE_SCHEMA = vol.Schema({
     vol.Required("name"): cv.string,
     vol.Required("entity_id"): cv.string,
-    vol.Required("related_entity"): RELATED_ENTITY_SCHEMA,
+    vol.Required("related_entity"): cv.validate_config(RELATED_ENTITY_SCHEMA),
 })
 
 # Define the schema for the state_manager configuration
@@ -32,25 +32,27 @@ STATE_MANAGER_SCHEMA = vol.Schema({
 
 CONFIG_SCHEMA = STATE_MANAGER_SCHEMA
 
-class StateManager(Entity):
+
+class StateManager(Entity, RestoreEntity):
 
     def __init__(self, hass, config):
         """Initialize My Device."""
+        super().__init__()
         self.hass = hass
         self._name = config["name"]
         self._entity_id = config["entity_id"]
         self._related_entity_id = config["related_entity"]["entity_id"]
         self._expected_state = config["related_entity"]["expected_state"]
         self._enabled = False
-        _LOGGER.debug(f"Created entity {self._entity_id} with enabled state {self._enabled}")
 
     async def async_added_to_hass(self):
         """Run when entity about to be added to hass."""
         await super().async_added_to_hass()
-        # Use the async_get_last_state method of the RestoreEntity class
+
+        # Restore state
         state = await self.async_get_last_state()
         if state:
-            self._enabled = state.state == 'on'
+            self._enabled = state.state == "on"
 
     @property
     def should_poll(self):
@@ -65,18 +67,28 @@ class StateManager(Entity):
     @property
     def state(self):
         """Return the state of My Device."""
-        # Here you can check the state of the related entity and return the state of My Device
-        return None
+        # Update state if needed
+        self.update()
+        return "on" if self._enabled else "off"
 
     @property
     def is_enabled(self):
         """Return whether My Device is enabled."""
-        return self._enabled.state
+        return self._enabled
 
     def update(self):
         """Update the state of My Device."""
-        # Here you can check the state of the related entity and update the state of My Device
-        pass
+        related_state = self.hass.states.get(self._related_entity_id)
+
+        if related_state:
+            self._enabled = related_state.state == self._expected_state
+
+        self.async_schedule_update_ha_state()
+
+    async def async_restore_last_state(self, last_state):
+        """Restore previous state."""
+        self._enabled = last_state.state == "on"
+
 
 async def async_setup(hass: HomeAssistant, config: dict):
     """Set up the state_manager component."""
@@ -84,8 +96,6 @@ async def async_setup(hass: HomeAssistant, config: dict):
 
     # Get the devices from the configuration
     devices = config[DOMAIN]
-
-    _LOGGER.info(f"Devices {devices}")
 
     # Create a StateManager entity for each device
     entities = [StateManager(hass, device) for device in devices]
@@ -97,4 +107,3 @@ async def async_setup(hass: HomeAssistant, config: dict):
     hass.add_job(hass.helpers.entity_component.async_add_entities, entities)
 
     return True
-
