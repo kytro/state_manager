@@ -17,10 +17,8 @@ CONFIG_SCHEMA = vol.Schema(
 )
 
 class StateManager(Entity):
-    """Representation of My Device."""
 
     def __init__(self, hass, config):
-        """Initialize My Device."""
         self.hass = hass
         self._name = config["name"]
         self._entity_id = config["entity_id"]
@@ -29,7 +27,6 @@ class StateManager(Entity):
         self._enabled = False
 
     async def async_added_to_hass(self):
-        """Run when entity about to be added to hass."""
         await super().async_added_to_hass()
         state = await async_get_last_state(self.hass, self.entity_id)
         if state:
@@ -64,4 +61,15 @@ class StateManager(Entity):
 async def async_setup(hass: HomeAssistant, config: dict):
     """Set up the state_manager component."""
     _LOGGER.info("Setting up state_manager")
+
+    # Get the devices from the configuration
+    devices = config[DOMAIN]
+
+    # Create a StateManager entity for each device
+    entities = [StateManager(hass, device) for device in devices]
+
+    # Add the entities to Home Assistant
+    hass.add_job(hass.helpers.entity_component.async_add_entities, entities)
+
     return True
+
