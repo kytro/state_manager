@@ -48,27 +48,7 @@ async def async_setup(hass, config):
         entity = StateManagerEntity(hass, name)
         hass.data[DOMAIN].append(entity)
 
-    # Register the update service
-    async def update_state(call):
-        """Update the state of a specific entity."""
-        entity_name = call.data.get("entity_name")
-        new_state = call.data.get("new_state")
-
-        for entity in hass.data[DOMAIN]:
-            if entity.name == entity_name:
-                entity.set_state(new_state)
-                break
-
-    hass.services.async_register(
-        DOMAIN,
-        "update_state",
-        update_state,
-    )
-
     return True
-
-
 
 # Setup and expose the component
 async_setup_entry = async_setup
-config_flow = None
