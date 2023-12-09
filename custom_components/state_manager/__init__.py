@@ -5,7 +5,7 @@ import voluptuous as vol
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers.entity import Entity
-from homeassistant.helpers.restore_state import async_get_last_state
+from homeassistant.helpers.restore_state import RestoreEntity
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -27,8 +27,10 @@ class StateManager(Entity):
         self._enabled = False
 
     async def async_added_to_hass(self):
+        """Run when entity about to be added to hass."""
         await super().async_added_to_hass()
-        state = await async_get_last_state(self.hass, self.entity_id)
+        # Use the async_get_last_state method of the RestoreEntity class
+        state = await self.async_get_last_state()
         if state:
             self._enabled = state.state == 'on'
 
