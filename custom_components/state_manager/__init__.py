@@ -48,6 +48,9 @@ async def async_setup(hass, config):
         entity = StateManagerEntity(hass, name)
         hass.data[DOMAIN].append(entity)
 
+        # Add the entity to the Home Assistant state machine
+        hass.states.async_set(entity.entity_id, entity.state)
+
     return True
 
 # Setup and expose the component
