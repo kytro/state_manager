@@ -33,6 +33,11 @@ class StateManagerEntity(entity.Entity):
         """Return the state attributes of the entity."""
         return {"enabled": self._enabled}
 
+    @property
+    def unique_id(self):
+        """Return a unique, unchanging string that represents this sensor."""
+        return self.entity_id
+
     def set_state(self, new_state):
         """Set the state of the entity."""
         self._state = new_state
@@ -68,7 +73,11 @@ class EnabledSwitch(SwitchEntity):
         """Turn the switch off."""
         self._state_manager_entity._enabled = False
         self.schedule_update_ha_state()
-
+    
+    @property
+    def unique_id(self):
+        """Return a unique, unchanging string that represents this sensor."""
+        return self.entity_id
 # Define the configuration schema for the component
 async def async_setup(hass, config):
     """Set up the state_manager component."""
