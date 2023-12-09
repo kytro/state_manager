@@ -11,12 +11,12 @@ DOMAIN = "state_manager"
 
 # Define a custom entity class for the state manager
 class StateManagerEntity(entity.Entity):
-
     def __init__(self, hass, name):
         """Initialize a StateManagerEntity."""
         self.hass = hass
         self._name = name
         self._state = STATE_UNKNOWN
+        self.entity_id = f"state_manager.{name}"
 
     @property
     def name(self):
