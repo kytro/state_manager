@@ -33,7 +33,7 @@ STATE_MANAGER_SCHEMA = vol.Schema({
 CONFIG_SCHEMA = STATE_MANAGER_SCHEMA
 
 
-class StateManager(Entity, RestoreEntity):
+class StateManager(Entity):
 
     def __init__(self, hass, config):
         """Initialize My Device."""
