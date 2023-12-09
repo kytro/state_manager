@@ -22,7 +22,7 @@ RELATED_ENTITY_SCHEMA = vol.Schema({
 DEVICE_SCHEMA = vol.Schema({
     vol.Required("name"): cv.string,
     vol.Required("entity_id"): cv.string,
-    vol.Required("related_entity"): cv.validate_config(RELATED_ENTITY_SCHEMA),
+    vol.Required("related_entity"): RELATED_ENTITY_SCHEMA,
 })
 
 # Define the schema for the state_manager configuration
