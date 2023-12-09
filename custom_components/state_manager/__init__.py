@@ -17,6 +17,7 @@ class StateManagerEntity(entity.Entity):
         self._name = name
         self._state = STATE_UNKNOWN
         self.entity_id = f"state_manager.{name}"
+        self._enabled = False
 
     @property
     def name(self):
@@ -31,6 +32,11 @@ class StateManagerEntity(entity.Entity):
     def set_state(self, new_state):
         """Set the state of the entity."""
         self._state = new_state
+        self.schedule_update_ha_state()
+
+    def toggle_enabled(self):
+        """Toggle the 'enabled' status of the entity."""
+        self._enabled = not self._enabled
         self.schedule_update_ha_state()
 
 
