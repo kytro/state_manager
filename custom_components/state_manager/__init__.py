@@ -4,10 +4,8 @@ from homeassistant.const import (
     STATE_UNKNOWN,
 )
 
-
 # Define custom domain
 DOMAIN = "state_manager"
-
 
 # Define a custom entity class for the state manager
 class StateManagerEntity(entity.Entity):
@@ -29,6 +27,11 @@ class StateManagerEntity(entity.Entity):
         """Return the current state of the entity."""
         return self._state
 
+    @property
+    def state_attributes(self):
+        """Return the state attributes of the entity."""
+        return {"enabled": self._enabled}
+
     def set_state(self, new_state):
         """Set the state of the entity."""
         self._state = new_state
@@ -38,7 +41,6 @@ class StateManagerEntity(entity.Entity):
         """Toggle the 'enabled' status of the entity."""
         self._enabled = not self._enabled
         self.schedule_update_ha_state()
-
 
 # Define the configuration schema for the component
 async def async_setup(hass, config):
