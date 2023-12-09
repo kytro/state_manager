@@ -73,6 +73,9 @@ async def async_setup(hass: HomeAssistant, config: dict):
     # Create a StateManager entity for each device
     entities = [StateManager(hass, device) for device in devices]
 
+    # Log the number of entities created
+    _LOGGER.debug(f"Created {len(entities)} entities")
+
     # Create an EntityComponent
     component = EntityComponent(_LOGGER, DOMAIN, hass)
 
