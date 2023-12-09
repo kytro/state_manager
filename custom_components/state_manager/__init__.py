@@ -13,9 +13,25 @@ _LOGGER = logging.getLogger(__name__)
 
 DOMAIN = "state_manager"
 
-CONFIG_SCHEMA = vol.Schema(
-    {vol.Optional(DOMAIN): vol.Schema({})}, extra=vol.ALLOW_EXTRA
-)
+# Define the schema for the related_entity configuration
+RELATED_ENTITY_SCHEMA = vol.Schema({
+    vol.Required("entity_id"): cv.string,
+    vol.Required("expected_state"): cv.string,
+})
+
+# Define the schema for the device configuration
+DEVICE_SCHEMA = vol.Schema({
+    vol.Required("name"): cv.string,
+    vol.Required("entity_id"): cv.string,
+    vol.Required("related_entity"): RELATED_ENTITY_SCHEMA,
+})
+
+# Define the schema for the state_manager configuration
+STATE_MANAGER_SCHEMA = vol.Schema({
+    DOMAIN: vol.All(cv.ensure_list, [DEVICE_SCHEMA])
+})
+
+CONFIG_SCHEMA = STATE_MANAGER_SCHEMA
 
 class StateManager(Entity):
 
@@ -68,7 +84,7 @@ async def async_setup(hass: HomeAssistant, config: dict):
     _LOGGER.info("Setting up state_manager")
 
     # Get the devices from the configuration
-    devices = config[DOMAIN].values()
+    devices = config[DOMAIN]
 
     _LOGGER.info(f"Devices {devices}")
 
@@ -78,12 +94,8 @@ async def async_setup(hass: HomeAssistant, config: dict):
     # Log the number of entities created
     _LOGGER.debug(f"Created {len(entities)} entities")
 
-    # Create an EntityComponent
-    component = EntityComponent(_LOGGER, DOMAIN, hass)
-
-    # Add the entities to the component
-    await component.async_add_entities(entities)
+    # Add the entities to Home Assistant
+    hass.add_job(hass.helpers.entity_component.async_add_entities, entities)
 
     return True
-
 
