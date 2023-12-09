@@ -1,5 +1,6 @@
 # Import necessary libraries
 import homeassistant.helpers.entity as entity
+from homeassistant.components.input_boolean import InputBoolean
 from homeassistant.const import (
     STATE_UNKNOWN,
 )
@@ -42,6 +43,34 @@ class StateManagerEntity(entity.Entity):
         self._enabled = not self._enabled
         self.schedule_update_ha_state()
 
+class EnabledToggle(InputBoolean):
+    def __init__(self, state_manager_entity):
+        """Initialize the toggle."""
+        self._state_manager_entity = state_manager_entity
+        self.entity_id = f"{state_manager_entity.entity_id}_enabled"
+
+    @property
+    def name(self):
+        """Return the name of the toggle."""
+        return f"{self._state_manager_entity.name} Enabled"
+
+    @property
+    def is_on(self):
+        """Return true if the toggle is on."""
+        return self._state_manager_entity._enabled
+
+    def turn_on(self, **kwargs):
+        """Turn the toggle on."""
+        if not self._state_manager_entity._enabled:
+            self._state_manager_entity.toggle_enabled()
+        self.schedule_update_ha_state()
+
+    def turn_off(self, **kwargs):
+        """Turn the toggle off."""
+        if self._state_manager_entity._enabled:
+            self._state_manager_entity.toggle_enabled()
+        self.schedule_update_ha_state()
+
 # Define the configuration schema for the component
 async def async_setup(hass, config):
     """Set up the state_manager component."""
@@ -53,11 +82,17 @@ async def async_setup(hass, config):
 
     # Create entities for each name
     for name in names:
-        entity = StateManagerEntity(hass, name)
-        hass.data[DOMAIN].append(entity)
+        state_manager_entity = StateManagerEntity(hass, name)
+        hass.data[DOMAIN].append(state_manager_entity)
 
-        # Add the entity to the Home Assistant state machine
-        hass.states.async_set(entity.entity_id, entity.state)
+        # Add the state manager entity to the Home Assistant state machine
+        hass.states.async_set(state_manager_entity.entity_id, state_manager_entity.state)
+
+        # Create an enabled toggle for the state manager entity
+        enabled_toggle = EnabledToggle(state_manager_entity)
+
+        # Add the enabled toggle to the Home Assistant state machine
+        hass.states.async_set(enabled_toggle.entity_id, enabled_toggle.state)
 
     return True
 
