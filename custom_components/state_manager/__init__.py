@@ -40,6 +40,9 @@ async def async_setup(hass, config):
     # Get the list of names from the configuration
     names = config[DOMAIN].get("names", [])
 
+    # Initialize hass.data[DOMAIN] as an empty list
+    hass.data[DOMAIN] = []
+
     # Create entities for each name
     for name in names:
         entity = StateManagerEntity(hass, name)
@@ -63,6 +66,7 @@ async def async_setup(hass, config):
     )
 
     return True
+
 
 
 # Setup and expose the component
