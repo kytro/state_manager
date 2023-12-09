@@ -20,12 +20,14 @@ CONFIG_SCHEMA = vol.Schema(
 class StateManager(Entity):
 
     def __init__(self, hass, config):
+        """Initialize My Device."""
         self.hass = hass
         self._name = config["name"]
         self._entity_id = config["entity_id"]
         self._related_entity_id = config["related_entity"]["entity_id"]
         self._expected_state = config["related_entity"]["expected_state"]
         self._enabled = False
+        _LOGGER.debug(f"Created entity {self._entity_id} with enabled state {self._enabled}")
 
     async def async_added_to_hass(self):
         """Run when entity about to be added to hass."""
