@@ -5,6 +5,7 @@ import voluptuous as vol
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers.entity import Entity
+from homeassistant.helpers.entity_component import EntityComponent
 from homeassistant.helpers.restore_state import RestoreEntity
 
 
@@ -65,13 +66,17 @@ async def async_setup(hass: HomeAssistant, config: dict):
     _LOGGER.info("Setting up state_manager")
 
     # Get the devices from the configuration
-    devices = config[DOMAIN]
+    devices = config[DOMAIN].values()
 
     # Create a StateManager entity for each device
     entities = [StateManager(hass, device) for device in devices]
 
-    # Add the entities to Home Assistant
-    hass.add_job(hass.helpers.entity_component.async_add_entities, entities)
+    # Create an EntityComponent
+    component = EntityComponent(_LOGGER, DOMAIN, hass)
+
+    # Add the entities to the component
+    await component.async_add_entities(entities)
 
     return True
+
 
