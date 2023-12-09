@@ -35,7 +35,6 @@ class StateManagerEntity(entity.Entity):
 
     @property
     def unique_id(self):
-        """Return a unique, unchanging string that represents this sensor."""
         return self.entity_id
 
     def set_state(self, new_state):
@@ -76,7 +75,6 @@ class EnabledSwitch(SwitchEntity):
     
     @property
     def unique_id(self):
-        """Return a unique, unchanging string that represents this sensor."""
         return self.entity_id
 # Define the configuration schema for the component
 async def async_setup(hass, config):
