@@ -70,7 +70,7 @@ async def async_setup(hass: HomeAssistant, config: dict):
     # Get the devices from the configuration
     devices = config[DOMAIN].values()
 
-    _LOGGER.info("Devices")
+    _LOGGER.info(f"Devices {devices}")
 
     # Create a StateManager entity for each device
     entities = [StateManager(hass, device) for device in devices]
