@@ -47,6 +47,9 @@ def setup(hass, config):
     """Set up the state_manager component."""
     devices = config[DOMAIN][CONF_DEVICES]
 
+    if DOMAIN not in hass.data:
+        hass.data[DOMAIN] = {}
+
     for unique_id in devices:
         name = unique_id  # Modify this line if the name should be different from the unique_id
         manager = StateManager(name, unique_id)
