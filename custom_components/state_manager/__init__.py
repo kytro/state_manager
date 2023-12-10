@@ -47,13 +47,12 @@ def setup(hass, config):
     """Set up the state_manager component."""
     devices = config[DOMAIN][CONF_DEVICES]
 
-    for device in devices:
-        name = device.get("name")
-        unique_id = device.get("unique_id")
-        if name and unique_id:
-            manager = StateManager(name, unique_id)
-            hass.data[DOMAIN][unique_id] = manager
-            discovery.load_platform(hass, "switch", DOMAIN, {"manager": manager}, config)
+    for unique_id in devices:
+        name = unique_id  # Modify this line if the name should be different from the unique_id
+        manager = StateManager(name, unique_id)
+        hass.data[DOMAIN][unique_id] = manager
+        discovery.load_platform(hass, "switch", DOMAIN, {"manager": manager}, config)
 
     return True
+
 
