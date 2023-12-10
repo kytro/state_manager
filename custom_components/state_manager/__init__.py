@@ -48,8 +48,12 @@ def setup(hass, config):
     devices = config[DOMAIN][CONF_DEVICES]
 
     for device in devices:
-        manager = StateManager(device["name"], device["unique_id"])
-        hass.data[DOMAIN][device["unique_id"]] = manager
-        discovery.load_platform(hass, "switch", DOMAIN, {"manager": manager}, config)
+        name = device.get("name")
+        unique_id = device.get("unique_id")
+        if name and unique_id:
+            manager = StateManager(name, unique_id)
+            hass.data[DOMAIN][unique_id] = manager
+            discovery.load_platform(hass, "switch", DOMAIN, {"manager": manager}, config)
 
     return True
+
