@@ -1,4 +1,7 @@
 import logging
+
+from . import DOMAIN
+
 from homeassistant.helpers.entity import Entity
 
 _LOGGER = logging.getLogger(__name__)
@@ -14,6 +17,13 @@ class StateManagerSensor(Entity):
     def __init__(self, device):
         """Initialize the sensor."""
         self._device = device
+
+        # Add the device to the device registry
+        self._device.device_registry.async_get_or_create(
+            config_entry_id="state_manager",
+            identifiers={(DOMAIN, self._device.unique_id)},
+            name=self._device.name,
+        )
 
     @property
     def name(self):

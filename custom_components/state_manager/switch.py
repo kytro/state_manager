@@ -1,4 +1,7 @@
 import logging
+
+from . import DOMAIN
+
 from homeassistant.components.switch import SwitchEntity
 
 _LOGGER = logging.getLogger(__name__)
@@ -14,6 +17,13 @@ class StateManagerSwitch(SwitchEntity):
         """Initialize the switch."""
         self._device = device
         self._state = False
+
+        # Add the device to the device registry
+        self._device.device_registry.async_get_or_create(
+            config_entry_id="state_manager",
+            identifiers={(DOMAIN, self._device.unique_id)},
+            name=self._device.name,
+        )
 
     @property
     def name(self):

@@ -1,8 +1,12 @@
 import logging
-from homeassistant.helpers import discovery
 import voluptuous as vol
-from homeassistant.helpers.template import Template
+
 import homeassistant.helpers.config_validation as cv
+
+from homeassistant.helpers import discovery
+from homeassistant.helpers import device_registry as dr
+from homeassistant.helpers.template import Template
+
 
 from homeassistant.const import CONF_DEVICES
 
@@ -26,13 +30,14 @@ CONFIG_SCHEMA = vol.Schema(
 )
 
 class StateManager:
-    def __init__(self, hass, name, unique_id, target_entity_id, expected_state):
+    def __init__(self, hass, name, unique_id, target_entity_id, expected_state, device_registry):
         self.hass = hass
         self.name = name
         self.unique_id = unique_id
         self.target_entity_id = target_entity_id
-        self._expected_state = expected_state  # Change this line
+        self._expected_state = expected_state
         self.expected_state_template = Template(expected_state, hass)
+        self.device_registry = device_registry
 
     @property
     def expected_state(self):
@@ -48,6 +53,7 @@ def setup(hass, config):
     """Set up the state_manager component."""
     try:
         devices = config[DOMAIN][CONF_DEVICES]
+        device_registry = dr.async_get(hass)
 
         if DOMAIN not in hass.data:
             hass.data[DOMAIN] = {}
@@ -55,7 +61,7 @@ def setup(hass, config):
         for device in devices:
             """Adding device: {device['id']}..."""
             _LOGGER.info("Adding device: %s...", device['id'])
-            manager = StateManager(hass, device['id'], device['id'], device['target_entity_id'], device['expected_state'])
+            manager = StateManager(hass, device['id'], device['id'], device['target_entity_id'], device['expected_state'], device_registry)
             hass.data[DOMAIN][device['id']] = manager
 
         # Load the switch platform with the current devices
