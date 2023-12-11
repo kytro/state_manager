@@ -22,7 +22,6 @@ class StateManagerSwitch(SwitchEntity):
         self._device.device_registry.async_get_or_create(
             identifiers={(DOMAIN, self._device.unique_id)},
             name=self._device.name,
-            via_device=(DOMAIN, "state_manager")  
         )
 
     @property
