@@ -36,6 +36,6 @@ def setup(hass, config):
         name = unique_id  # Modify this line if the name should be different from the unique_id
         manager = StateManager(name, unique_id)
         hass.data[DOMAIN][unique_id] = manager
-        discovery.load_platform(hass, "switch", DOMAIN, {"manager": manager}, config)
+        discovery.load_platform(hass, "input_boolean", DOMAIN, {"manager": manager}, config)
 
     return True
