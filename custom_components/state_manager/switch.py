@@ -20,9 +20,9 @@ class StateManagerSwitch(SwitchEntity):
 
         # Add the device to the device registry
         self._device.device_registry.async_get_or_create(
-            config_entry_id="state_manager",
             identifiers={(DOMAIN, self._device.unique_id)},
             name=self._device.name,
+            via_device=(DOMAIN, "state_manager")  
         )
 
     @property
