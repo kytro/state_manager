@@ -1,7 +1,7 @@
 from homeassistant.components.input_boolean import InputBoolean
 
 def setup_platform(hass, config, add_entities, discovery_info=None):
-    """Set up the input_boolean platform."""
+    print(f"Discovery info: {discovery_info}")
     manager = discovery_info.get("manager")
     add_entities([StateInputBoolean(manager)])
 
