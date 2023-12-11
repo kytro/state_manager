@@ -16,6 +16,7 @@ CONFIG_SCHEMA = vol.Schema(
                 vol.Required(CONF_DEVICES): vol.All(cv.ensure_list, [vol.Schema({
                     vol.Required('id'): cv.string,
                     vol.Required('target_entity_id'): cv.string,
+                    vol.Required('expected_state'): cv.string,
                 })]),
             }
         )
@@ -26,10 +27,11 @@ CONFIG_SCHEMA = vol.Schema(
 
 
 class StateManager:
-    def __init__(self, name, unique_id, target_entity_id):
+    def __init__(self, name, unique_id, target_entity_id, expected_state):
         self.name = name
         self.unique_id = unique_id
         self.target_entity_id = target_entity_id
+        self.expected_state = expected_state 
 
 def setup(hass, config):
     """Set up the state_manager component."""
@@ -42,7 +44,7 @@ def setup(hass, config):
         for device in devices:
             """Adding device: {device['id']}..."""
             _LOGGER.info("Adding device: %s...", device['id'])
-            manager = StateManager(device['id'], device['id'], device['target_entity_id'])
+            manager = StateManager(device['id'], device['id'], device['target_entity_id'], device['expected_state'])
             hass.data[DOMAIN][device['id']] = manager
 
         # Load the switch platform with the current devices
