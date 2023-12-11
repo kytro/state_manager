@@ -1,6 +1,6 @@
 {
   "name": "State Manager",
-  "domains": [ "state_manager" ],
+  "domains": [ "state_manager", "input_boolean" ],
   "documentation": "https://github.com/kytro/state_manager/README.md",
   "issue_tracker": "https://github.com/kytro/state_manager/issues",
   "content_in_root": false,
