@@ -18,7 +18,7 @@ class StateManagerSwitch(SwitchEntity):
     @property
     def name(self):
         """Return the name of the switch."""
-        return self._device.name
+        return f"{self._device.name} Enabled"
 
     @property
     def unique_id(self):

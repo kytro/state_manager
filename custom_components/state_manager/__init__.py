@@ -13,17 +13,23 @@ CONFIG_SCHEMA = vol.Schema(
     {
         DOMAIN: vol.Schema(
             {
-                vol.Required(CONF_DEVICES): cv.ensure_list,
+                vol.Required(CONF_DEVICES): vol.All(cv.ensure_list, [vol.Schema({
+                    vol.Required('id'): cv.string,
+                    vol.Required('target_entity_id'): cv.string,
+                })]),
             }
         )
     },
     extra=vol.ALLOW_EXTRA,
 )
 
+
+
 class StateManager:
-    def __init__(self, name, unique_id):
+    def __init__(self, name, unique_id, target_entity_id):
         self.name = name
         self.unique_id = unique_id
+        self.target_entity = target_entity
 
 def setup(hass, config):
     """Set up the state_manager component."""
@@ -33,12 +39,11 @@ def setup(hass, config):
         if DOMAIN not in hass.data:
             hass.data[DOMAIN] = {}
 
-        for unique_id in devices:
-            """Adding device: {unique_id}..."""
-            _LOGGER.info("Adding device: %s...", unique_id)
-            name = unique_id
-            manager = StateManager(name, unique_id)
-            hass.data[DOMAIN][unique_id] = manager
+        for device in devices:
+            """Adding device: {device['id']}..."""
+            _LOGGER.info("Adding device: %s...", device['id'])
+            manager = StateManager(device['id'], device['id'], device['target_entity_id'])
+            hass.data[DOMAIN][device['id']] = manager
 
         # Load the switch platform with the current devices
         discovery.load_platform(hass, 'switch', DOMAIN, {}, config)
