@@ -70,22 +70,22 @@ def setup(hass, config):
             manager = StateManager(hass, device['id'], device['id'], device['target_entity_id'], device['expected_state'])
             hass.data[DOMAIN][device['id']] = manager
 
-        # Load the switch platform with the current devices
-        discovery.load_platform(
-            hass,
-            "switch",
-            DOMAIN,
-            {"device_info": device.device_info},
-            config,
-        )
+            # Load the switch platform with the current devices
+            discovery.load_platform(
+                hass,
+                "switch",
+                DOMAIN,
+                {"device_info": device.device_info},
+                config,
+            )
 
-        discovery.load_platform(
-            hass,
-            "sensor",
-            DOMAIN,
-            {"device_info": device.device_info},
-            config,
-        )
+            discovery.load_platform(
+                hass,
+                "sensor",
+                DOMAIN,
+                {"device_info": device.device_info},
+                config,
+            )
 
         return True  # Return True if setup was successful
     except Exception as e:
