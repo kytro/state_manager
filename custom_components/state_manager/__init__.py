@@ -29,7 +29,7 @@ class StateManager:
     def __init__(self, name, unique_id, target_entity_id):
         self.name = name
         self.unique_id = unique_id
-        self.target_entity = target_entity
+        self.target_entity_id = target_entity_id
 
 def setup(hass, config):
     """Set up the state_manager component."""
