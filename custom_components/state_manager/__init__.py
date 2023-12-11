@@ -25,21 +25,24 @@ CONFIG_SCHEMA = vol.Schema(
     extra=vol.ALLOW_EXTRA,
 )
 
-
-
 class StateManager:
     def __init__(self, hass, name, unique_id, target_entity_id, expected_state):
         self.hass = hass
         self.name = name
         self.unique_id = unique_id
         self.target_entity_id = target_entity_id
-        self.expected_state = expected_state 
+        self._expected_state = expected_state  # Change this line
         self.expected_state_template = Template(expected_state, hass)
 
     @property
     def expected_state(self):
         """Return the expected state after rendering the template."""
         return self.expected_state_template.async_render()
+
+    @expected_state.setter
+    def expected_state(self, value):
+        """Ignore attempts to set this property."""
+        pass
 
 def setup(hass, config):
     """Set up the state_manager component."""
