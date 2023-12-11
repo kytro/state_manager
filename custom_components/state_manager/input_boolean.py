@@ -1,7 +1,10 @@
+import logging
 from homeassistant.components.input_boolean import InputBoolean
 
+_LOGGER = logging.getLogger(__name__)
+
 def setup_platform(hass, config, add_entities, discovery_info=None):
-    print(f"Discovery info: {discovery_info}")
+    _LOGGER.info("Discovery info: %s...", discovery_info)
     manager = discovery_info.get("manager")
     add_entities([StateInputBoolean(manager)])
 
