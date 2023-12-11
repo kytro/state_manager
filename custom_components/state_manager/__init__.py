@@ -38,12 +38,7 @@ def setup(hass, config):
         name = unique_id
         manager = StateManager(name, unique_id)
         hass.data[DOMAIN][unique_id] = manager
-        discovery.load_platform(
-            hass,
-            "input_boolean",
-            DOMAIN,
-            {"manager": manager, "device_name": name},
-            config,
-        )
 
-    return True
+    # Load the switch platform with the current devices
+    discovery.load_platform(hass, 'switch', DOMAIN, {}, config)
+
