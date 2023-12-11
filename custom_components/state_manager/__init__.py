@@ -33,9 +33,17 @@ def setup(hass, config):
         hass.data[DOMAIN] = {}
 
     for unique_id in devices:
-        name = unique_id  # Modify this line if the name should be different from the unique_id
+        """Adding device: {unique_id}..."""
+        _LOGGER.info("Adding device: %s...", unique_id)
+        name = unique_id
         manager = StateManager(name, unique_id)
         hass.data[DOMAIN][unique_id] = manager
-        discovery.load_platform(hass, "input_boolean", DOMAIN, {"manager": manager}, config)
+        discovery.load_platform(
+            hass,
+            "input_boolean",
+            DOMAIN,
+            {"manager": manager, "device_name": name},
+            config,
+        )
 
     return True
