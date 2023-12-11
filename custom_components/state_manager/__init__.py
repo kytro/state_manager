@@ -4,7 +4,6 @@ import voluptuous as vol
 import homeassistant.helpers.config_validation as cv
 
 from homeassistant.helpers import discovery
-from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers.template import Template
 
 
@@ -30,14 +29,13 @@ CONFIG_SCHEMA = vol.Schema(
 )
 
 class StateManager:
-    def __init__(self, hass, name, unique_id, target_entity_id, expected_state, device_registry):
+    def __init__(self, hass, name, unique_id, target_entity_id, expected_state):
         self.hass = hass
         self.name = name
         self.unique_id = unique_id
         self.target_entity_id = target_entity_id
         self._expected_state = expected_state
         self.expected_state_template = Template(expected_state, hass)
-        self.device_registry = device_registry
 
     @property
     def expected_state(self):
@@ -49,11 +47,19 @@ class StateManager:
         """Ignore attempts to set this property."""
         pass
 
+    @property
+    def device_info(self):
+        return {
+            "identifiers": {(DOMAIN, self.unique_id)},
+            "name": self.name,
+            "model": "State Manager",
+            "manufacturer": "State Manager",
+        }
+
 def setup(hass, config):
     """Set up the state_manager component."""
     try:
         devices = config[DOMAIN][CONF_DEVICES]
-        device_registry = dr.async_get(hass)
 
         if DOMAIN not in hass.data:
             hass.data[DOMAIN] = {}
@@ -61,12 +67,25 @@ def setup(hass, config):
         for device in devices:
             """Adding device: {device['id']}..."""
             _LOGGER.info("Adding device: %s...", device['id'])
-            manager = StateManager(hass, device['id'], device['id'], device['target_entity_id'], device['expected_state'], device_registry)
+            manager = StateManager(hass, device['id'], device['id'], device['target_entity_id'], device['expected_state'])
             hass.data[DOMAIN][device['id']] = manager
 
         # Load the switch platform with the current devices
-        discovery.load_platform(hass, 'switch', DOMAIN, {}, config)
-        discovery.load_platform(hass, 'sensor', DOMAIN, {}, config)
+        discovery.load_platform(
+            hass,
+            "switch",
+            DOMAIN,
+            {"device_info": device.device_info},
+            config,
+        )
+
+        discovery.load_platform(
+            hass,
+            "sensor",
+            DOMAIN,
+            {"device_info": device.device_info},
+            config,
+        )
 
         return True  # Return True if setup was successful
     except Exception as e:

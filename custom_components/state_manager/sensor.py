@@ -18,12 +18,10 @@ class StateManagerSensor(Entity):
         """Initialize the sensor."""
         self._device = device
 
-        # Add the device to the device registry
-        self._device.device_registry.async_get_or_create(
-            identifiers={(DOMAIN, self._device.unique_id)},
-            name=self._device.name,
-        )
-
+    @property
+    def device_info(self):
+        return self._device.device_info
+        
     @property
     def name(self):
         """Return the name of the sensor."""
