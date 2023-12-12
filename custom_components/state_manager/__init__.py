@@ -7,10 +7,10 @@ DOMAIN = "state_manager"
 
 _LOGGER = logging.getLogger(__name__)
 
-def setup(hass, config):
+async def async_setup(hass, config):
     """Set up the state_manager component."""
     # Register a new device
-    device_registry = dr.async_get(hass)
+    device_registry = await dr.async_get_registry(hass)
     
     # Check if the device already exists
     device = device_registry.async_get_device({(DOMAIN, "state_manager_test")})
@@ -20,7 +20,7 @@ def setup(hass, config):
 
     # Create the device
     try:
-        device_registry.async_get_or_create(
+        await device_registry.async_get_or_create(
             config_entry_id="state_manager",
             identifiers={(DOMAIN, "state_manager_test")},
             name="State Manager Device",
