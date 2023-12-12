@@ -35,5 +35,5 @@ class StateManagerSensor(Entity):
     @property
     def state(self):
         """Return the state of the sensor."""
-        return self.hass.states.is_state(self._device.target_entity_id, self._device.expected_state)
+        return self.hass.states.is_state(self._device._target_entity_id, self._device.expected_state)
 
