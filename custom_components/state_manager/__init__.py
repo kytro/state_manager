@@ -1,5 +1,6 @@
 import logging
 import voluptuous as vol
+from homeassistant import config_entries
 from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.entity import Entity
 from homeassistant.helpers import config_validation as cv
@@ -12,13 +13,6 @@ DEVICE_SCHEMA = vol.Schema({
     vol.Required('id'): cv.string,
 })
 
-CONFIG_SCHEMA = vol.Schema({
-    vol.Required('state_manager'): vol.Schema({
-        vol.Required('devices'): vol.All(cv.ensure_list, [DEVICE_SCHEMA])
-    })
-}, extra=vol.ALLOW_EXTRA)
-
-
 class StateManager(Entity):
     def __init__(self, name, id):
         self._name = name
@@ -30,6 +24,7 @@ class StateManager(Entity):
             manufacturer = "State Manager",
             model = "State Manager",
         )
+        _LOGGER.info(f"Device created: {self._name}")
 
     @property
     def unique_id(self):
@@ -51,7 +46,20 @@ class StateManager(Entity):
         _LOGGER.info("Updating state")
         # Update the state of your entity here
 
+class StateManagerConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
+    async def async_step_user(self, user_input=None):
+        if user_input is not None:
+            # TODO: process user_input and add new device
+            _LOGGER.info(f"New device added: {user_input['name']}")
+            return self.async_create_entry(title="New Device", data=user_input)
+
+        return self.async_show_form(
+            step_id="user",
+            data_schema=DEVICE_SCHEMA
+        )
+
 async def async_setup(hass, config):
+    hass.config_entries.async_register_flow(DOMAIN, "StateManager", StateManagerConfigFlow)
     _LOGGER.info("Setting up state_manager")
     # Set up your component here
     devices = config[DOMAIN]['devices']
