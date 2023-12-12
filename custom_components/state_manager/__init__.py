@@ -1,5 +1,6 @@
 import logging
 import voluptuous as vol
+from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.entity import Entity
 from homeassistant.helpers import config_validation as cv
 
@@ -23,10 +24,20 @@ class StateManager(Entity):
         self._name = name
         self._id = id
         self._state = None
+        self._device_info = DeviceInfo(
+            identifiers = {(DOMAIN, id)},
+            name = name,
+            manufacturer = "State Manager",
+            model = "State Manager",
+        )
 
     @property
     def name(self):
         return self._name
+
+    @property
+    def device_info(self):
+        return self._device_info
 
     @property
     def state(self):
