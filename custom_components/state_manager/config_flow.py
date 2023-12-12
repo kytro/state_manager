@@ -1,11 +1,14 @@
 import voluptuous as vol
 from homeassistant import config_entries, core, exceptions
-from homeassistant.const import CONF_NAME
+from homeassistant.const import CONF_NAME, CONF_ID
 from homeassistant.helpers import config_validation as cv
 
 from . import DOMAIN
 
-DATA_SCHEMA = vol.Schema({vol.Required(CONF_NAME): cv.string})
+DATA_SCHEMA = vol.Schema({
+    vol.Required(CONF_NAME, default="Device Name"): cv.string,
+    vol.Required(CONF_ID, default="Device ID"): cv.string,
+})
 
 async def validate_input(hass: core.HomeAssistant, data):
     # TODO: validate the user input
