@@ -58,6 +58,11 @@ class StateManager(Entity):
 
     @property
     def name(self):
+        """Return the unique_id."""
+        return self._unique_id
+
+    @property
+    def name(self):
         """Return the name."""
         return self._name
 
