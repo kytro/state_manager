@@ -19,6 +19,11 @@ class StateManagerSensor(Entity):
         self._device = device
 
     @property
+    def unique_id(self):
+        """Return a unique ID."""
+        return self._device.unique_id
+
+    @property
     def device_info(self):
         return self._device.device_info
         
@@ -31,3 +36,4 @@ class StateManagerSensor(Entity):
     def state(self):
         """Return the state of the sensor."""
         return self.hass.states.is_state(self._device.target_entity_id, self._device.expected_state)
+
