@@ -1,128 +1,32 @@
+"""Home Assistant custom integration."""
 import logging
-import voluptuous as vol
 
-import homeassistant.helpers.config_validation as cv
-
-from homeassistant.helpers import discovery
-
-from homeassistant.helpers.entity import DeviceInfo, Entity
-from homeassistant.helpers.template import Template
-
-from homeassistant.const import CONF_DEVICES
+from homeassistant.helpers.entity import Entity
 
 _LOGGER = logging.getLogger(__name__)
 
-DOMAIN = "state_manager"
+def setup_platform(hass, config, add_entities, discovery_info=None):
+    """Set up the sensor platform."""
+    add_entities([BathroomLightSensor(hass)])
 
-CONFIG_SCHEMA = vol.Schema(
-    {
-        DOMAIN: vol.Schema(
-            {
-                vol.Required(CONF_DEVICES): vol.All(cv.ensure_list, [vol.Schema({
-                    vol.Required('id'): cv.string,
-                    vol.Required('target_entity_id'): cv.string,
-                    vol.Required('expected_state'): cv.string,
-                })]),
-            }
-        )
-    },
-    extra=vol.ALLOW_EXTRA,
-)
+class BathroomLightSensor(Entity):
+    """Representation of a Sensor."""
 
-class StateManager(Entity):
-    def __init__(self, hass, name, unique_id, device_id, target_entity_id, expected_state):
-        self._hass = hass
-        self._name = name
-        self._unique_id = unique_id
-        self._device_id = device_id
-        self._target_entity_id = target_entity_id
-        self._expected_state = expected_state
-        self._expected_state_template = Template(expected_state, hass)
-        
-    @property
-    def device_info(self) -> DeviceInfo:
-        return DeviceInfo(
-        identifiers={(DOMAIN, self._device_id)},
-        manufacturer="State Manager",
-        name=self._name,
-        model="State Manager",
-        )
-       
-    @property
-    def expected_state(self):
-        """Return the expected state after rendering the template."""
-        return self._expected_state_template.async_render()
-
-    @expected_state.setter
-    def expected_state(self, value):
-        """Ignore attempts to set this property."""
-        pass
-
-    @property
-    def unique_id(self):
-        """Return the unique_id."""
-        return self._unique_id
+    def __init__(self, hass):
+        """Initialize the sensor."""
+        self._state = None
+        self.hass = hass
 
     @property
     def name(self):
-        """Return the name."""
-        return self._name
-
-    @name.setter
-    def name(self, value):
-        """Set the name."""
-        self._name = value
+        """Return the name of the sensor."""
+        return 'Bathroom Light'
 
     @property
-    def device_info(self) -> DeviceInfo:
-        """Return device registry information for this entity."""
-        _LOGGER.info("Device info: %s", self._attr_device_info)
-        return self._attr_device_info
+    def state(self):
+        """Return the state of the sensor."""
+        return self._state
 
-def setup(hass, config):
-    """Set up the state_manager component."""
-    try:
-        devices = config[DOMAIN][CONF_DEVICES]
-
-        if DOMAIN not in hass.data:
-            hass.data[DOMAIN] = {}
-
-        for device in devices:
-            _LOGGER.info("Adding device: %s...", device['id'])
-            manager = StateManager(
-                hass,
-                device['id'],
-                device['device_id'],
-                device['id'],
-                device['target_entity_id'],
-                device['expected_state'],
-              )
-            hass.data[DOMAIN][device['id']] = manager
-
-            # switch
-            discovery.load_platform(
-                hass,
-                "switch",
-                DOMAIN,
-                {
-                "device_info": manager.device_info,
-                "device_id": manager.device_id, 
-                },
-                config,
-            )
-
-            # sensor
-            discovery.load_platform(
-              hass,
-              "sensor",
-              DOMAIN,
-              {
-                "device_info": manager.device_in
-              },
-              config,
-            )
-
-        return True  # Return True if setup was successful
-    except Exception as e:
-        _LOGGER.error("Error setting up state_manager: %s", e)
-        return False  # Return False if there was an error
+    def update(self):
+        """Fetch new state data for the sensor."""
+        self._state = self.hass.states.get('light.bathroom').state == 'on'
