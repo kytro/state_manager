@@ -9,6 +9,7 @@ _LOGGER = logging.getLogger(__name__)
 
 async def async_setup(hass, config):
     """Set up the state_manager component."""
+    _LOGGER.debug("Setting up the state_manager component.")
     # Register a new device
     device_registry = await dr.async_get_registry(hass)
     
