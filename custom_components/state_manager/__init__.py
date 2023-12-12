@@ -4,6 +4,8 @@ import voluptuous as vol
 import homeassistant.helpers.config_validation as cv
 
 from homeassistant.helpers import discovery
+
+from homeassistant.helpers.entity import DeviceInfo, Entity
 from homeassistant.helpers.template import Template
 
 from homeassistant.const import CONF_DEVICES
@@ -27,7 +29,7 @@ CONFIG_SCHEMA = vol.Schema(
     extra=vol.ALLOW_EXTRA,
 )
 
-class StateManager:
+class StateManager(Entity):
     def __init__(self, hass, name, unique_id, device_id, target_entity_id, expected_state):
         self.hass = hass
         self.name = name
@@ -36,7 +38,15 @@ class StateManager:
         self.target_entity_id = target_entity_id
         self._expected_state = expected_state
         self.expected_state_template = Template(expected_state, hass)
+        
+        self.attr_device_info = DeviceInfo(
+            identifiers={(DOMAIN, self.device_id)},
+            manufacturer="State Manager",
+            name=self.device_name,
+            model="State Manager",
 
+        )
+       
     @property
     def expected_state(self):
         """Return the expected state after rendering the template."""
@@ -48,15 +58,10 @@ class StateManager:
         pass
 
     @property
-    def device_info(self):
-        device_info = {
-            "identifiers": {(DOMAIN, self.device_id)},
-            "name": self.name,
-            "model": "State Manager",
-            "manufacturer": "State Manager",
-        }
-        _LOGGER.info("Device info: %s", device_info)
-        return device_info
+    def device_info(self) -> DeviceInfo:
+        """Return device registry information for this entity."""
+        _LOGGER.info("Device info: %s", self.attr_device_info)
+        return self.attr_device_info
 
 def setup(hass, config):
     """Set up the state_manager component."""
