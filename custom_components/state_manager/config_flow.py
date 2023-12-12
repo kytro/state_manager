@@ -12,6 +12,7 @@ DATA_SCHEMA = vol.Schema({
 
 async def validate_input(hass: core.HomeAssistant, data):
     # TODO: validate the user input
+    _LOGGER.info(f"Validating user input: {data}")
     return {"title": data[CONF_NAME]}
 
 class StateManagerConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
@@ -22,7 +23,8 @@ class StateManagerConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         if user_input is not None:
             try:
                 info = await validate_input(self.hass, user_input)
-                return self.async_create_entry(title=info["title"], data=user_input)
+                _LOGGER.info(f"Creating new entry: {info}")
+                return self.async_create_entry(title=info["title"], data={"devices": [user_input]})
             except exceptions.HomeAssistantError:
                 errors["base"] = "unknown_error"
 
