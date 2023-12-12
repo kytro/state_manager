@@ -32,6 +32,10 @@ class StateManager(Entity):
         )
 
     @property
+    def unique_id(self):
+        return self._id
+
+    @property
     def name(self):
         return self._name
 
