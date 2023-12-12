@@ -49,12 +49,14 @@ class StateManager:
 
     @property
     def device_info(self):
-        return {
+        device_info = {
             "identifiers": {(DOMAIN, self.device_id)},
             "name": self.name,
             "model": "State Manager",
             "manufacturer": "State Manager",
         }
+        _LOGGER.info("Device info: %s", device_info)
+        return device_info
 
 def setup(hass, config):
     """Set up the state_manager component."""
