@@ -66,7 +66,7 @@ def setup(hass, config):
 
         for device in devices:
             _LOGGER.info("Adding device: %s...", device['id'])
-            manager = StateManager(hass, device['id'], device['id'], device['name'], device['target_entity_id'], device['expected_state'])
+            manager = StateManager(hass, device['id'], device['id'], device['id'], device['target_entity_id'], device['expected_state'])
             hass.data[DOMAIN][device['id']] = manager
 
             # Load the switch platform with the current device
