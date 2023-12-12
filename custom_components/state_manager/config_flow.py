@@ -5,6 +5,8 @@ from homeassistant.helpers import config_validation as cv
 
 from . import DOMAIN
 
+
+_LOGGER = logging.getLogger(__name__)
 DATA_SCHEMA = vol.Schema({
     vol.Required(CONF_NAME, default="Device Name"): cv.string,
     vol.Required(CONF_ID, default="Device ID"): cv.string,
