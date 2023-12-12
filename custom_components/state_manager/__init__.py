@@ -1,36 +1,26 @@
-"""The state_manager component."""
-
 import logging
-from homeassistant.helpers import device_registry as dr
-
-DOMAIN = "state_manager"
+from homeassistant.helpers.entity import Entity
 
 _LOGGER = logging.getLogger(__name__)
 
+class StateManager(Entity):
+    def __init__(self, name):
+        self._name = name
+        self._state = None
+
+    @property
+    def name(self):
+        return self._name
+
+    @property
+    def state(self):
+        return self._state
+
+    async def async_update(self):
+        _LOGGER.info("Updating state")
+        # Update the state of your entity here
+
 async def async_setup(hass, config):
-    """Set up the state_manager component."""
-    _LOGGER.debug("Setting up the state_manager component.")
-    # Register a new device
-    device_registry = await dr.async_get_registry(hass)
-    
-    # Check if the device already exists
-    device = device_registry.async_get_device({(DOMAIN, "state_manager_test")})
-    if device is not None:
-        _LOGGER.warning("Device with unique ID 'state_manager_test' already exists.")
-        return True
-
-    # Create the device
-    try:
-        await device_registry.async_get_or_create(
-            config_entry_id="state_manager",
-            identifiers={(DOMAIN, "state_manager_test")},
-            name="State Manager Device",
-            manufacturer="state_manager",
-            model="state_manager"
-        )
-        _LOGGER.info("Device 'State Manager Device' created successfully.")
-    except Exception as e:
-        _LOGGER.error(f"Failed to create device: {e}")
-        return False
-
+    _LOGGER.info("Setting up state_manager")
+    # Set up your component here
     return True
