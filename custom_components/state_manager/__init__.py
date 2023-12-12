@@ -31,26 +31,25 @@ CONFIG_SCHEMA = vol.Schema(
 
 class StateManager(Entity):
     def __init__(self, hass, name, unique_id, device_id, target_entity_id, expected_state):
-        self.hass = hass
-        self.name = name
-        self.unique_id = unique_id
-        self.device_id = device_id
-        self.target_entity_id = target_entity_id
+        self._hass = hass
+        self._name = name
+        self._unique_id = unique_id
+        self._device_id = device_id
+        self._target_entity_id = target_entity_id
         self._expected_state = expected_state
-        self.expected_state_template = Template(expected_state, hass)
+        self._expected_state_template = Template(expected_state, hass)
         
-        self.attr_device_info = DeviceInfo(
-            identifiers={(DOMAIN, self.device_id)},
+        self._attr_device_info = DeviceInfo(
+            identifiers={(DOMAIN, self._device_id)},
             manufacturer="State Manager",
-            name=self.device_name,
+            name=self._name,  # Changed from self.device_name to self._name
             model="State Manager",
-
         )
        
     @property
     def expected_state(self):
         """Return the expected state after rendering the template."""
-        return self.expected_state_template.async_render()
+        return self._expected_state_template.async_render()
 
     @expected_state.setter
     def expected_state(self, value):
@@ -58,10 +57,20 @@ class StateManager(Entity):
         pass
 
     @property
+    def name(self):
+        """Return the name."""
+        return self._name
+
+    @name.setter
+    def name(self, value):
+        """Set the name."""
+        self._name = value
+
+    @property
     def device_info(self) -> DeviceInfo:
         """Return device registry information for this entity."""
-        _LOGGER.info("Device info: %s", self.attr_device_info)
-        return self.attr_device_info
+        _LOGGER.info("Device info: %s", self._attr_device_info)
+        return self._attr_device_info
 
 def setup(hass, config):
     """Set up the state_manager component."""
