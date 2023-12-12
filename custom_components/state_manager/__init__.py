@@ -39,11 +39,13 @@ class StateManager(Entity):
         self._expected_state = expected_state
         self._expected_state_template = Template(expected_state, hass)
         
-        self._attr_device_info = DeviceInfo(
-            identifiers={(DOMAIN, self._device_id)},
-            manufacturer="State Manager",
-            name=self._name,  # Changed from self.device_name to self._name
-            model="State Manager",
+    @property
+    def device_info(self) -> DeviceInfo:
+        return DeviceInfo(
+        identifiers={(DOMAIN, self._device_id)},
+        manufacturer="State Manager",
+        name=self._name,
+        model="State Manager",
         )
        
     @property
@@ -87,25 +89,37 @@ def setup(hass, config):
 
         for device in devices:
             _LOGGER.info("Adding device: %s...", device['id'])
-            manager = StateManager(hass, device['id'], device['id'], device['id'], device['target_entity_id'], device['expected_state'])
+            manager = StateManager(
+                hass,
+                device['id'],
+                device['device_id'],
+                device['id'],
+                device['target_entity_id'],
+                device['expected_state'],
+              )
             hass.data[DOMAIN][device['id']] = manager
 
-            # Load the switch platform with the current device
+            # switch
             discovery.load_platform(
                 hass,
                 "switch",
                 DOMAIN,
-                {"device_info": manager.device_info},
+                {
+                "device_info": manager.device_info,
+                "device_id": manager.device_id, 
+                },
                 config,
             )
 
-            # Load the sensor platform with the current device
+            # sensor
             discovery.load_platform(
-                hass,
-                "sensor",
-                DOMAIN,
-                {"device_info": manager.device_info},
-                config,
+              hass,
+              "sensor",
+              DOMAIN,
+              {
+                "device_info": manager.device_in
+              },
+              config,
             )
 
         return True  # Return True if setup was successful
