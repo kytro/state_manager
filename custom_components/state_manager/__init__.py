@@ -1,32 +1,18 @@
-"""Home Assistant custom integration."""
-import logging
+"""The state_manager component."""
 
-from homeassistant.helpers.entity import Entity
+from homeassistant.helpers import device_registry as dr
 
-_LOGGER = logging.getLogger(__name__)
+DOMAIN = "state_manager"
 
-def setup_platform(hass, config, add_entities, discovery_info=None):
-    """Set up the sensor platform."""
-    add_entities([BathroomLightSensor(hass)])
-
-class BathroomLightSensor(Entity):
-    """Representation of a Sensor."""
-
-    def __init__(self, hass):
-        """Initialize the sensor."""
-        self._state = None
-        self.hass = hass
-
-    @property
-    def name(self):
-        """Return the name of the sensor."""
-        return 'Bathroom Light'
-
-    @property
-    def state(self):
-        """Return the state of the sensor."""
-        return self._state
-
-    def update(self):
-        """Fetch new state data for the sensor."""
-        self._state = self.hass.states.get('light.bathroom').state == 'on'
+def setup(hass, config):
+    """Set up the state_manager component."""
+    # Register a new device
+    device_registry = dr.async_get(hass)
+    device_registry.async_get_or_create(
+        config_entry_id="state_manager",
+        identifiers={(DOMAIN, "state_manager_test")},
+        name="State Manager Device",
+        manufacturer="state_manager",
+        model="state_manager"
+    )
+    return True

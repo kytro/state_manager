@@ -1,39 +1,32 @@
+"""Sensor for the state of the bathroom light."""
 import logging
-
-from . import DOMAIN
 
 from homeassistant.helpers.entity import Entity
 
 _LOGGER = logging.getLogger(__name__)
 
 def setup_platform(hass, config, add_entities, discovery_info=None):
-    """Set up the State Manager sensor."""
-    _LOGGER.info("Setting up State Manager sensor")
-    devices = hass.data["state_manager"]
-    sensors = [StateManagerSensor(device) for device in devices.values()]
-    add_entities(sensors, True)
+    """Set up the sensor platform."""
+    add_entities([BathroomLightSensor(hass)])
 
-class StateManagerSensor(Entity):
-    def __init__(self, device):
+class BathroomLightSensor(Entity):
+    """Representation of a Sensor."""
+
+    def __init__(self, hass):
         """Initialize the sensor."""
-        self._device = device
+        self._state = None
+        self.hass = hass
 
-    @property
-    def unique_id(self):
-        """Return a unique ID."""
-        return self._device.unique_id
-
-    @property
-    def device_info(self):
-        return self._device.device_info
-        
     @property
     def name(self):
         """Return the name of the sensor."""
-        return f"{self._device.name} Expected State"
+        return 'Bathroom Light'
 
     @property
     def state(self):
         """Return the state of the sensor."""
-        return self.hass.states.is_state(self._device._target_entity_id, self._device.expected_state)
+        return self._state
 
+    def update(self):
+        """Fetch new state data for the sensor."""
+        self._state = self.hass.states.get('light.bathroom').state == 'on'
