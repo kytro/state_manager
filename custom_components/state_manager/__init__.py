@@ -28,10 +28,11 @@ CONFIG_SCHEMA = vol.Schema(
 )
 
 class StateManager:
-    def __init__(self, hass, name, unique_id, target_entity_id, expected_state):
+    def __init__(self, hass, name, unique_id, device_id, target_entity_id, expected_state):
         self.hass = hass
         self.name = name
         self.unique_id = unique_id
+        self.device_id = device_id
         self.target_entity_id = target_entity_id
         self._expected_state = expected_state
         self.expected_state_template = Template(expected_state, hass)
@@ -49,7 +50,7 @@ class StateManager:
     @property
     def device_info(self):
         return {
-            "identifiers": {(DOMAIN, self.unique_id)},
+            "identifiers": {(DOMAIN, self.device_id)},
             "name": self.name,
             "model": "State Manager",
             "manufacturer": "State Manager",
@@ -65,7 +66,7 @@ def setup(hass, config):
 
         for device in devices:
             _LOGGER.info("Adding device: %s...", device['id'])
-            manager = StateManager(hass, device['id'], device['id'], device['target_entity_id'], device['expected_state'])
+            manager = StateManager(hass, device['id'], device['id'], device['name'], device['target_entity_id'], device['expected_state'])
             hass.data[DOMAIN][device['id']] = manager
 
             # Load the switch platform with the current device
