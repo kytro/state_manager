@@ -1,6 +1,6 @@
 import logging
 from homeassistant.helpers.entity import DeviceInfo, Entity
-from homeassistant.helpers.device_registry import async_get_entity_registry as get_dev_reg
+from homeassistant.helpers.device_registry import async_get as get_dev_reg
 
 _LOGGER = logging.getLogger(__name__)
 DOMAIN = 'state_manager'
