@@ -11,9 +11,9 @@ async def async_setup(hass: core.HomeAssistant, config: dict):
     hass.data.setdefault(DOMAIN, {})
     return True
 
-async def async_setup_entry(hass: core.HomeAssistant, entry: config_entries.ConfigEntry):
-    hass.data[DOMAIN][entry.entry_id] = entry.data
-    hass.async_create_task(hass.config_entries.async_forward_entry_setup(entry, "sensor"))
+async def async_setup_entry(hass: core.HomeAssistant, config_entry: config_entries.ConfigEntry, async_add_entities):
+    hass.data[DOMAIN][config_entry.entry_id] = config_entry.data
+    hass.async_create_task(hass.config_entries.async_forward_entry_setup(config_entry, "sensor"))
     return True
 
 class StateManagerEntity(Entity):
