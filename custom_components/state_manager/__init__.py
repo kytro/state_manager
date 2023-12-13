@@ -59,7 +59,6 @@ async def async_setup_entry(hass, config_entry):
             platform=DOMAIN,
             unique_id=entity.unique_id,
             device_id=entity._id,
-            config_entry_id=entity.unique_id,
             name=entity._name,
         )
     return True
