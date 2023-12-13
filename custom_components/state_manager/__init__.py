@@ -34,8 +34,8 @@ class StateManager(Entity):
     def state(self):
         return self._state
 
-    async def async_added_to_hass(self):
-        dev_reg = await get_dev_reg(self.hass)
+    def async_added_to_hass(self):
+        dev_reg = get_dev_reg(self.hass)
         dev_reg.async_get_or_create(
             config_entry_id=self.unique_id,
             identifiers=self._device_info.identifiers,
