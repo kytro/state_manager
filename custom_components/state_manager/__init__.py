@@ -1,12 +1,12 @@
 import logging
-from homeassistant.helpers.entity import DeviceInfo
-from homeassistant.helpers.entity import Entity
+from homeassistant.helpers.entity import DeviceInfo, Entity
+from homeassistant.helpers.device_registry import async_get_registry as get_dev_reg
 
 _LOGGER = logging.getLogger(__name__)
 DOMAIN = 'state_manager'
 
 class StateManager(Entity):
-    def __init__(self, name, id):
+    def __init__(self, hass, name, id):
         self._name = name
         self._id = id
         self._state = None
@@ -33,6 +33,16 @@ class StateManager(Entity):
     @property
     def state(self):
         return self._state
+
+    async def async_added_to_hass(self):
+        dev_reg = await get_dev_reg(self.hass)
+        dev_reg.async_get_or_create(
+            config_entry_id=self.unique_id,
+            identifiers=self._device_info.identifiers,
+            name=self._device_info.name,
+            manufacturer=self._device_info.manufacturer,
+            model=self._device_info.model,
+        )
 
     async def async_update(self):
         _LOGGER.info("Updating state")
