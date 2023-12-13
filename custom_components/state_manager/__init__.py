@@ -21,7 +21,7 @@ class StateManager(Entity):
 
     @property
     def unique_id(self):
-        return f"{DOMAIN}.{self._id}"
+        return self._id  
 
     @property
     def name(self):
