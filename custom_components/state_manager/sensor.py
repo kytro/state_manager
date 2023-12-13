@@ -1,4 +1,3 @@
-# sensor.py
 from homeassistant.helpers.entity import Entity
 
 class StateManagerSensor(Entity):
