@@ -21,7 +21,7 @@ class StateManager(Entity):
 
     @property
     def unique_id(self):
-        return self._id
+        return f"{DOMAIN}.{self._id}"
 
     @property
     def name(self):
@@ -46,7 +46,7 @@ class StateManager(Entity):
         )
 
         # Create a new entity for the device
-        entity_id = f"{DOMAIN}.{self._id}"
+        entity_id = self.unique_id
         self.hass.states.async_set(entity_id, 'off')
 
         # Add the entity to the entity registry
