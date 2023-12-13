@@ -36,31 +36,6 @@ class StateManager(Entity):
     def state(self):
         return self._state
 
-    def async_added_to_hass(self):
-        dev_reg = get_dev_reg(self.hass)
-        dev_reg.async_get_or_create(
-            config_entry_id=self.unique_id,
-            identifiers=self._device_info.identifiers,
-            name=self._device_info.name,
-            manufacturer=self._device_info.manufacturer,
-            model=self._device_info.model,
-        )
-
-        # Create a new entity for the device
-        entity_id = self.unique_id
-        self.hass.states.async_set(entity_id, 'off')
-
-        # Add the entity to the entity registry
-        ent_reg = get_ent_reg(self.hass)
-        ent_reg.async_get_or_create(
-            domain=DOMAIN,
-            platform=DOMAIN,
-            unique_id=self.unique_id,
-            device_id=self._id,
-            config_entry_id=self.unique_id,
-            name=self._name,
-        )
-
     async def async_update(self):
         _LOGGER.info("Updating state")
         # Update the state of your entity here
@@ -70,7 +45,21 @@ async def async_setup_entry(hass, config_entry):
     devices = config_entry.data['devices']
     for device in devices:
         _LOGGER.info(f"Creating device: {device['id']}")
-        hass.states.async_set(device['id'], 'off')
         entity = StateManager(hass, device['name'], device['id'])
         hass.add_job(entity.async_added_to_hass)
+        
+        # Create a new entity for the device
+        entity_id = entity.unique_id
+        hass.states.async_set(entity_id, 'off')
+
+        # Add the entity to the entity registry
+        ent_reg = get_ent_reg(hass)
+        ent_reg.async_get_or_create(
+            domain=DOMAIN,
+            platform=DOMAIN,
+            unique_id=entity.unique_id,
+            device_id=entity._id,
+            config_entry_id=entity.unique_id,
+            name=entity._name,
+        )
     return True
