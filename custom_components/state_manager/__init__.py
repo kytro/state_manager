@@ -44,6 +44,7 @@ class StateManager(Entity):
             model=self._device_info.model,
         )
 
+
     async def async_update(self):
         _LOGGER.info("Updating state")
         # Update the state of your entity here
