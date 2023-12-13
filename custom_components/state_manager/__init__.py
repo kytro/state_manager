@@ -11,7 +11,7 @@ class StateManager(Entity):
         self._name = name
         self._id = id
         self._state = None
-        self._device_info = DeviceInfo(
+        self._attr_device_info = DeviceInfo(
             identifiers = {(DOMAIN, id)},
             name = name,
             manufacturer = "State Manager",
@@ -28,8 +28,9 @@ class StateManager(Entity):
         return self._name
 
     @property
-    def device_info(self):
-        return self._device_info
+    def device_info(self) -> DeviceInfo:
+        """Return device registry information for this entity."""
+        return self._attr_device_info
 
     @property
     def state(self):

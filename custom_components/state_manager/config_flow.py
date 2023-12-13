@@ -10,12 +10,18 @@ from . import DOMAIN
 _LOGGER = logging.getLogger(__name__)
 DATA_SCHEMA = vol.Schema({
     vol.Required(CONF_NAME, default="Device Name"): cv.string,
-    vol.Required(CONF_ID, default="Device ID"): cv.string,
 })
 
 async def validate_input(hass: core.HomeAssistant, data):
-    # TODO: validate the user input
-    _LOGGER.info(f"Validating user input: {data}")
+    # Generate the ID from the name
+    id = f"{DOMAIN}." + data[CONF_NAME].lower().replace(" ", "_")
+    
+    # Log the generated ID
+    _LOGGER.info(f"Generated ID: {id}")
+    
+    # Add the generated ID to the data
+    data[CONF_ID] = id
+    
     return {"title": data[CONF_NAME]}
 
 class StateManagerConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
