@@ -1,3 +1,4 @@
+from .const import *
 from homeassistant.helpers.entity import Entity
 
 class StateManagerSensor(Entity):

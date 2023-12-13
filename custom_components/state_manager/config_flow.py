@@ -1,3 +1,4 @@
+from .const import *
 from homeassistant import config_entries
 
 class StateManagerConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
