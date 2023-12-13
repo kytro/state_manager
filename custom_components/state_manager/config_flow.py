@@ -1,6 +1,8 @@
 from homeassistant import config_entries
 
-DOMAIN = "state_manager"
+from .const import (
+    DOMAIN,
+)
 
 class StateManagerConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     async def async_step_user(self, user_input=None):

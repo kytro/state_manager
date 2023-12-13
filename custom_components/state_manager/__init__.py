@@ -1,7 +1,11 @@
+import logging
+import voluptuous as vol
 from homeassistant import config_entries, core
 from homeassistant.helpers.entity import Entity
 
-DOMAIN = "state_manager"
+from .const import (
+    DOMAIN,
+)
 
 async def async_setup(hass: core.HomeAssistant, config: dict):
     hass.data.setdefault(DOMAIN, {})
