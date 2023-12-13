@@ -1,4 +1,3 @@
-from .const import *
 from homeassistant import config_entries, core
 from homeassistant.helpers.entity import Entity
 
