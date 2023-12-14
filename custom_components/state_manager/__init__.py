@@ -10,7 +10,7 @@ DOMAIN = "state_manager"
 class StateManagerPlatform(EntityPlatform):
 
     def __init__(self, hass: HomeAssistant):
-        super().__init__(hass)
+        self.hass = hass
         self._devices: List[StateManagerDevice] = []
 
     async def async_setup(self, config_entry: ConfigEntry, async_add_entities):
