@@ -5,6 +5,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity import Entity
 from homeassistant.helpers.entity_platform import EntityPlatform
 
+DOMAIN = "state_manager"
 
 class StateManagerPlatform(EntityPlatform):
 
@@ -61,3 +62,12 @@ class StateManagerDevice(Entity):
         self._expected_state = True
         self.async_schedule_update_ha_state()
 
+async def async_setup(hass: HomeAssistant, config: dict):
+    hass.data[DOMAIN] = {}
+    return True
+
+async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
+    platform = StateManagerPlatform(hass)
+    hass.data[DOMAIN][entry.entry_id] = platform
+    await platform.async_setup(entry)
+    return True
