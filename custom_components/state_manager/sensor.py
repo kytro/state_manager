@@ -1,16 +1,27 @@
-from homeassistant.helpers.entity import Entity
+from homeassistant.components.sensor import SensorEntity
 
-async def async_setup_platform(hass, config, async_add_entities, discovery_info=None):
-    # Fix: call the correct setup method
-    if "state_manager" in config:
-        async_add_entities([StateManagerSensor(config["state_manager"])])
-    return True
+from .init import StateManagerDevice
 
-class StateManagerSensor(Entity):
-    def __init__(self, config):
-        self._config = config
+
+class StateManagerExpectedSensor(SensorEntity):
+
+    def __init__(self, device: StateManagerDevice):
+        self._device = device
 
     @property
-    def state(self):
-        # Use data from config if available
-        return self._config.get("state", "boo")
+    def name(self):
+        return f"{self._device.name}_expected_state"
+
+    @property
+    def native_value(self):
+        return self._device.state
+
+    @property
+    def device_info(self):
+        return self._device.device_info
+
+    @property
+    def should_poll(self):
+        return False
+
+
