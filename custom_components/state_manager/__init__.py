@@ -2,6 +2,7 @@ from typing import List
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
+from homeassistant.helpers.entity import Entity
 from homeassistant.helpers.entity_platform import EntityPlatform
 
 
@@ -19,7 +20,7 @@ class StateManagerPlatform(EntityPlatform):
         return True
 
 
-class StateManagerDevice(homeassistant.helpers.entity.Entity):
+class StateManagerDevice(Entity):
 
     def __init__(self, platform: StateManagerPlatform, name: str):
         self.platform = platform

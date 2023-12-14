@@ -1,6 +1,6 @@
 from homeassistant.components.sensor import SensorEntity
 
-from .init import StateManagerDevice
+from . import StateManagerDevice
 
 
 class StateManagerExpectedSensor(SensorEntity):
