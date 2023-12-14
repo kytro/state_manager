@@ -1,73 +1,44 @@
-from typing import List
+import logging
+import voluptuous as vol
 
-from homeassistant.config_entries import ConfigEntry
+from homeassistant.config_entries import SOURCE_IMPORT, ConfigEntry
+
+from homeassistant.const import (
+    Platform,
+)
+
 from homeassistant.core import HomeAssistant
-from homeassistant.helpers.entity import Entity
-from homeassistant.helpers.entity_platform import EntityPlatform
+from homeassistant.helpers import config_validation as cv
+from homeassistant.helpers.entity import DeviceInfo, Entity
+from homeassistant.helpers.typing import ConfigType
 
-DOMAIN = "state_manager"
+from .const import (
+    DOMAIN,
+)
 
-class StateManagerPlatform(EntityPlatform):
+_LOGGER = logging.getLogger(__name__)
 
-    def __init__(self, hass: HomeAssistant):
-        self.hass = hass
-        self._devices: List[StateManagerDevice] = []
+CONFIG_SCHEMA = vol.Schema(
+    cv.deprecated(DOMAIN),
+    {
+        DOMAIN: vol.Schema(
+            {
+                vol.Required(CONF_USERNAME): cv.string,
+            }
+        )
+    },
+    extra=vol.ALLOW_EXTRA,
+)
 
-    async def async_setup(self, config_entry: ConfigEntry, async_add_entities):
-        for device_config in config_entry.data:
-            device = StateManagerDevice(self, device_config["name"])
-            self._devices.append(device)
-            async_add_entities([device])
-        return True
+PLATFORMS: list[Platform] = [Platform.SENSOR]
 
+async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
+    hass.async_create_task(
+        hass.config_entries.flow.async_init(
+            DOMAIN,
+            context={"source": SOURCE_IMPORT},
+            data=config[DOMAIN],
+        )
+    )
 
-class StateManagerDevice(Entity):
-
-    def __init__(self, platform: StateManagerPlatform, name: str):
-        self.platform = platform
-        self._name = name
-        self._expected_state = True
-
-    @property
-    def name(self):
-        return self._name
-
-    @property
-    def state(self):
-        return self._expected_state
-
-    @property
-    def unique_id(self):
-        return f"state_manager_{self._name}"
-
-    @property
-    def device_info(self):
-        return {
-            "identifiers": {("state_manager", self._name)},
-            "manufacturer": "Custom Component Example",
-            "model": "State Manager Device",
-            "name": self._name,
-        }
-
-    @property
-    def should_poll(self):
-        return False
-
-    async def async_added_to_hass(self):
-        await super().async_added_to_hass()
-        self.platform.hass.async_create_task(self.update_expected_state())
-
-    async def update_expected_state(self):
-        # Replace this with your logic for updating expected state
-        self._expected_state = True
-        self.async_schedule_update_ha_state()
-
-async def async_setup(hass: HomeAssistant, config: dict):
-    hass.data[DOMAIN] = {}
-    return True
-
-async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
-    platform = StateManagerPlatform(hass)
-    hass.data[DOMAIN][entry.entry_id] = platform
-    await platform.async_setup(entry)
     return True
