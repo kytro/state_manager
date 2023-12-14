@@ -21,6 +21,10 @@ _LOGGER = logging.getLogger(__name__)
 PLATFORMS: list[Platform] = [Platform.SENSOR]
 
 async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
+    hass.data[DOMAIN] = {}
+    if DOMAIN not in config:
+        return True
+
     hass.async_create_task(
         hass.config_entries.flow.async_init(
             DOMAIN,
