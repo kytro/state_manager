@@ -1,14 +1,23 @@
 from homeassistant.components.switch import SwitchEntity
 from .const import DOMAIN
 
+async def async_setup_entry(hass, config_entry, async_add_entities):
+    device_registry = await dr.async_get_registry(hass)
+
+    # Create a switch for each device
+    switches = []
+    for device in device_registry.devices.values():
+        if config_entry.entry_id in device.config_entries:
+            switches.append(StateManagerEnabled(device, config_entry))
+    async_add_entities(switches, True)
+
 class StateManagerEnabled(SwitchEntity):
-    def __init__(self, device, config_entry, hass):
+    def __init__(self, device, config_entry):
         self._device = device
         self._config_entry = config_entry
         self.entity_id = f"switch.{device.name}_enabled"
         self._state = False
         self._name = f"{device.name} Enabled"
-        self.hass = hass
 
     @property
     def unique_id(self):
@@ -19,10 +28,10 @@ class StateManagerEnabled(SwitchEntity):
         return {
             "identifiers": {(DOMAIN, self._device.id)},
             "name": self._name,
-            "via_device": {(DOMAIN, self._device.name)},
             "manufacturer": "Your Manufacturer",
             "model": "Your Model",
             "sw_version": "1.0",
+            "via_device": (DOMAIN, self._device.id),
         }
 
     @property
