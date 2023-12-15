@@ -16,7 +16,7 @@ async def async_setup_entry(hass, entry):
     # Create a switch for each device
     for device in device_registry.devices.values():
         if entry.entry_id in device.config_entries:
-            switch = StateManagerEnabled(hass, device)
+            switch = StateManagerEnabled(device, entry)
             hass.add_job(switch.async_update_ha_state, True)
 
     return True
