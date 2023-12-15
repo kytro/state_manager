@@ -9,20 +9,11 @@ async def async_setup_entry(hass, entry):
 
     for device in device_registry.devices.values():
         if entry.entry_id in device.config_entries:
-            device_info = {
-                "identifiers": {(DOMAIN, device.id)},
-                "name": f"{device.name} Enabled",
-                # ... additional device information ...
-            }
             # Get or create the device
             device = device_registry.async_get_or_create(
                 config_entry_id=entry.entry_id,
                 identifiers={(DOMAIN, device.id)},
                 name=device.name,
-                manufacturer="Your Manufacturer",
-                model="Your Model",
-                sw_version="1.0",
-                device_info=device_info,
             )
             input_boolean = StateManagerEnabled(hass, device)
             hass.add_job(input_boolean.update_state, 'off')
