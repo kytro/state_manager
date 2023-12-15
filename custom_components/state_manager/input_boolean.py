@@ -4,13 +4,14 @@ from .const import DOMAIN
 
 class StateManagerEnabled(input_boolean.InputBoolean):
 
-    def __init__(self, hass, device):
+    def __init__(self, hass, device, unique_id):
         super().__init__(hass, f"input_boolean.{device.name}_enabled")
         self.device = device
+        self._attr_unique_id = unique_id
 
     @property
     def unique_id(self):
-        return f"{self.device.id}_enabled"
+        return self._attr_unique_id
 
     @property
     def device_info(self):
