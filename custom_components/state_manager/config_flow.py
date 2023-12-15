@@ -3,6 +3,7 @@ from .const import DOMAIN
 import voluptuous as vol
 
 class CustomConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
+
     VERSION = 1
 
     async def async_step_user(self, user_input=None):
