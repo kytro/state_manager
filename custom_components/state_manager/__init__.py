@@ -19,13 +19,10 @@ async def async_setup_entry(hass, entry):
                 config_entry_id=entry.entry_id,
                 identifiers={(DOMAIN, device.id)},
                 name=device.name,
-            )
-            # Update the device
-            device_registry.async_update_device(
-                device.id,
-                name=device.name,
-                new_identifiers={(DOMAIN, device.id)},
-                new_device_info=device_info,
+                manufacturer="Your Manufacturer",
+                model="Your Model",
+                sw_version="1.0",
+                device_info=device_info,
             )
             input_boolean = StateManagerEnabled(hass, device)
             hass.add_job(input_boolean.update_state, 'off')
