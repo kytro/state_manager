@@ -1,13 +1,12 @@
-from homeassistant.components import input_boolean
-from homeassistant.helpers.entity import Entity
+from homeassistant.components.switch import SwitchEntity
 from .const import DOMAIN
 
-class StateManagerEnabled(Entity):
+class StateManagerEnabled(SwitchEntity):
     def __init__(self, hass, device):
         self.hass = hass
         self.device = device
-        self.entity_id = f"input_boolean.{device.name}_enabled"
-        self._state = 'off'
+        self.entity_id = f"switch.{device.name}_enabled"
+        self._state = False
         self._name = f"{device.name} Enabled"
 
     @property
@@ -22,13 +21,17 @@ class StateManagerEnabled(Entity):
         }
 
     @property
-    def state(self):
+    def is_on(self):
         return self._state
 
     @property
     def name(self):
         return self._name
 
-    def update_state(self, state):
-        self._state = state
+    def turn_on(self, **kwargs):
+        self._state = True
+        self.async_write_ha_state()
+
+    def turn_off(self, **kwargs):
+        self._state = False
         self.async_write_ha_state()
