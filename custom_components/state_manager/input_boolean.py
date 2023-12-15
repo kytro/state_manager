@@ -10,7 +10,7 @@ class StateManagerEnabled(input_boolean.InputBoolean):
 
     @property
     def unique_id(self):
-        return f"{device.id}_enabled"
+        return f"{self.device.id}_enabled"
 
     @property
     def device_info(self):
@@ -34,4 +34,3 @@ class StateManagerEnabled(input_boolean.InputBoolean):
     def configure_entity(self, hass, config_entry, options=None):
         super().configure_entity(hass, config_entry, options=options)
         # ... additional configuration based on options (optional) ...
-
