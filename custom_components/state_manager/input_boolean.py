@@ -2,11 +2,20 @@ from homeassistant.components import input_boolean
 from homeassistant.helpers.entity import Entity
 from .const import DOMAIN
 
-class StateManagerEnabled(input_boolean.InputBoolean):
+class StateManagerEnabled(Entity):
 
     def __init__(self, hass, device):
-        super().__init__(hass, f"input_boolean.{device.name}_enabled")
+        self.entity_id = f"input_boolean.{device.name}_enabled"
         self.device = device
+        self.hass = hass
+
+    @property
+    def unique_id(self):
+        return self._attr_unique_id
+
+    @unique_id.setter
+    def unique_id(self, unique_id):
+        self._attr_unique_id = unique_id
 
     @property
     def device_info(self):
