@@ -2,7 +2,7 @@ from homeassistant.components.switch import SwitchEntity
 from .const import DOMAIN
 
 class StateManagerEnabled(SwitchEntity):
-    def __init__(self, device, config_entry):
+    def __init__(self, hass, device, config_entry):
         self._device = device
         self._config_entry = config_entry
         self.entity_id = f"switch.{device.name}_enabled"
