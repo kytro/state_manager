@@ -15,7 +15,8 @@ async def async_setup_entry(hass, entry):
                 identifiers={(DOMAIN, device.id)},
                 name=device.name,
             )
-            input_boolean = StateManagerEnabled(hass, device, entry.entry_id)
+            input_boolean = StateManagerEnabled(hass, device)
+            input_boolean.unique_id = entry.entry_id
             hass.add_job(input_boolean.update_state, 'off')
 
     return True
