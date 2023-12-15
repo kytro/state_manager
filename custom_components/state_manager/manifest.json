@@ -1,10 +1,11 @@
 {
-  "domain": "state_manager",
-  "name": "State Manager",
-  "documentation": "https://github.com/kytro/state_manager",
-  "dependencies": [],
   "codeowners": [ "@kytro" ],
-  "requirements": [],
   "config_flow": true,
-  "version": "0.1.0"
+  "dependencies": [],
+  "documentation": "https://github.com/kytro/state_manager",
+  "domain": "state_manager",
+  "iot_class": "local_push",
+  "name": "State Manager",
+  "requirements": [],
+  "version": "1.0.0"
 }

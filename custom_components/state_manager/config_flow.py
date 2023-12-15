@@ -1,23 +1,19 @@
-from typing import Any
+from homeassistant import config_entries
+from .const import DOMAIN
+import voluptuous as vol
 
-from homeassistant.config_entries import ConfigFlow
+class CustomConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
+    VERSION = 1
+    CONNECTION_CLASS = config_entries.CONN_CLASS_UNKNOWN
 
-
-class StateManagerConfigFlow(ConfigFlow, domain="state_manager"):
-
-    async def async_step_user(self, user_input: Any = None):
+    async def async_step_user(self, user_input=None):
         if user_input is None:
-            return self.show_form(step_id="user")
+            return self.async_show_form(
+                step_id='user',
+                data_schema=vol.Schema({vol.Required('name'): str}),
+            )
 
         return self.async_create_entry(
-            title=user_input["name"], data={"name": user_input["name"]}
+            title=user_input['name'],
+            data=user_input,
         )
-
-    async def async_step_import(self, config: Any):
-        return self.async_create_entry(
-            title=config["name"], data={"name": config["name"]}
-        )
-
-    async def async_step_config(self, config: Any = None):
-        return await self.async_step_user(config)
-
