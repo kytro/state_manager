@@ -1,23 +1,17 @@
-from homeassistant.helpers import device_registry as dr
+from homeassistant.helpers import entity_component
 from .const import DOMAIN
-from .input_boolean import StateManagerEnabled
 
 async def async_setup_entry(hass, entry):
     hass.data[DOMAIN] = entry.data['name']
 
-    device_registry = dr.async_get(hass)
+    # Create a new group
+    group = entity_component.EntityComponent(
+        hass,
+        DOMAIN,
+        hass.data[DOMAIN]
+    )
 
-    devices = list(device_registry.devices.values())  # Create a copy of the devices
-    for device in devices:
-        if entry.entry_id in device.config_entries:
-            # Get or create the device
-            device = device_registry.async_get_or_create(
-                config_entry_id=entry.entry_id,
-                identifiers={(DOMAIN, device.id)},
-                name=device.name,
-            )
-            input_boolean = StateManagerEnabled(hass, device)
-            input_boolean.unique_id = entry.entry_id
-            hass.add_job(input_boolean.update_state, 'off')
+    # Add the group to Home Assistant
+    await group.async_added_to_hass()
 
     return True
