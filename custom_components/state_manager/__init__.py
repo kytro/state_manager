@@ -1,26 +1,22 @@
-from homeassistant.helpers import entity_registry
+from homeassistant.helpers import device_registry as dr
 from .const import DOMAIN
+from .input_boolean import StateManagerEnabled
 
 async def async_setup_entry(hass, entry):
     hass.data[DOMAIN] = entry.data['name']
 
-    # Get the entity registry
-    registry = entity_registry.async_get(hass)
+    device_registry = dr.async_get(hass)
 
-    # Create a new group
-    group = registry.entities.get(hass.data[DOMAIN])
-
-    if group is None:
-        group = registry.async_get_or_create(
-            domain=DOMAIN,
-            platform='group',
-            unique_id=hass.data[DOMAIN],
-            suggested_object_id=hass.data[DOMAIN],
-            config_entry=entry,
-        )
-
-    # Add the input_boolean to the group
-    input_boolean_entity_id = f"input_boolean.{hass.data[DOMAIN]}_enabled"
-    group.entities.append(input_boolean_entity_id)
+    for device in device_registry.devices.values():
+        if entry.entry_id in device.config_entries:
+            # Get or create the device
+            device = device_registry.async_get_or_create(
+                config_entry_id=entry.entry_id,
+                identifiers={(DOMAIN, device.id)},
+                name=device.name,
+            )
+            input_boolean = StateManagerEnabled(hass, device)
+            input_boolean.unique_id = entry.entry_id
+            hass.add_job(input_boolean.update_state, 'off')
 
     return True
