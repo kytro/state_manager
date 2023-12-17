@@ -11,7 +11,7 @@ async def async_setup_entry(hass, entry):
         if entry.entry_id in device.config_entries:
             # Get or create the device
             device = device_registry.async_get_or_create(
-                config_entry_id=entry.entry_id,
+                #config_entry_id=entry.entry_id,
                 identifiers={(DOMAIN, device.id)},
                 name=device.name,
             )
