@@ -1,15 +1,8 @@
 from homeassistant.helpers import entity_registry
-from homeassistant.components import input_boolean
 from .const import DOMAIN
 
 async def async_setup_entry(hass, entry):
     hass.data[DOMAIN] = entry.data['name']
-
-    # Create an input_boolean
-    input_boolean_entity_id = f"input_boolean.{hass.data[DOMAIN]}_enabled"
-    await hass.services.async_call('input_boolean', 'toggle', {
-        'entity_id': input_boolean_entity_id
-    })
 
     # Get the entity registry
     registry = await entity_registry.async_get(hass)
@@ -27,6 +20,7 @@ async def async_setup_entry(hass, entry):
         )
 
     # Add the input_boolean to the group
+    input_boolean_entity_id = f"input_boolean.{hass.data[DOMAIN]}_enabled"
     group.entities.append(input_boolean_entity_id)
 
     return True
