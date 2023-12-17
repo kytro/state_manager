@@ -1,6 +1,21 @@
 from homeassistant.components import input_boolean
 from homeassistant.helpers.entity import Entity
+from homeassistant.const import CONF_DEVICES
+from homeassistant.helpers import config_validation as cv
+from homeassistant.helpers.entity_platform import PLATFORM_SCHEMA
 from .const import DOMAIN
+
+import voluptuous as vol
+
+PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
+    vol.Required(CONF_DEVICES): vol.All(cv.ensure_list, [cv.string]),
+})
+
+async def async_setup_platform(hass, config, async_add_entities, discovery_info=None):
+    """Set up the platform."""
+    devices = config.get(CONF_DEVICES)
+    entities = [StateManagerEnabled(device) for device in devices]
+    async_add_entities(entities, True)
 
 class StateManagerEnabled(Entity):
 

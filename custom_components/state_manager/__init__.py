@@ -7,7 +7,8 @@ async def async_setup_entry(hass, entry):
 
     device_registry = dr.async_get(hass)
 
-    for device in device_registry.devices.values():
+    devices = list(device_registry.devices.values())  # Create a copy of the devices
+    for device in devices:
         if entry.entry_id in device.config_entries:
             # Get or create the device
             device = device_registry.async_get_or_create(
