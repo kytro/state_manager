@@ -2,7 +2,7 @@ from homeassistant.components import input_boolean
 from homeassistant.helpers.entity import Entity
 from homeassistant.const import CONF_DEVICES
 from homeassistant.helpers import config_validation as cv
-from homeassistant.helpers.entity_platform import PLATFORM_SCHEMA
+from homeassistant.components.input_boolean import PLATFORM_SCHEMA
 from .const import DOMAIN
 
 import voluptuous as vol
