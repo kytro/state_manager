@@ -21,7 +21,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
     device = device_registry.async_get_or_create(
         config_entry_id=entry.entry_id,
-        identifiers={(DOMAIN, (entry.entry_id, "your_device_identifier"))}
+        identifiers={(DOMAIN, (entry.entry_id, "_device"))},
         name=entry.data['name'],
         manufacturer="Your Device Manufacturer",
         model="Your Device Model",
