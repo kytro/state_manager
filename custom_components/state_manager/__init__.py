@@ -15,7 +15,9 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
     device_registry = dr.async_get(hass)
 
-    hass.data.setdefault(DOMAIN, {})[entry.entry_id]
+    hass.data.setdefault(DOMAIN, {})[entry.entry_id] = {
+        "devices": device_registry.devices
+        }
 
     #for device in device_registry.devices.values():
     #    if entry.entry_id in device.config_entries:
