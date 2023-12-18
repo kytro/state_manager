@@ -19,16 +19,12 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         "devices": device_registry.devices
         }
 
-    #for device in device_registry.devices.values():
-    #    if entry.entry_id in device.config_entries:
-    #        # Get or create the device
-    #        device = device_registry.async_get_or_create(
-    #            #config_entry_id=entry.entry_id,
-    #            identifiers={(DOMAIN, device.id)},
-    #            name=device.name,
-    #        )
-    #        #input_boolean = StateManagerEnabled(hass, device)
-    #        #input_boolean.unique_id = entry.entry_id
-    #        #hass.add_job(input_boolean.update_state, 'off')
-
+    device = device_registry.async_get_or_create(
+        config_entry_id=entry.entry_id,
+        identifiers={(DOMAIN, (entry.entry_id, "your_device_identifier"))}
+        name=entry.data['name'],
+        manufacturer="Your Device Manufacturer",
+        model="Your Device Model",
+        sw_version="Your Device Software Version"
+    )
     return True
