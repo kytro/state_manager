@@ -13,7 +13,7 @@ class StateManagerEnabled(SwitchEntity):
         self._attr_name = f"{device.name} Enabled"
         self._attr_unique_id = f"{DOMAIN}_{device.id}"
         self._attr_device_info = {
-            "identifiers": {(DOMAIN, device.id)},
+            "identifiers": {(DOMAIN, (device.id,))},
             "name": device.name,
             "manufacturer": device.manufacturer,
             "model": device.model,
