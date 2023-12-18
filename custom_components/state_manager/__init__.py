@@ -11,7 +11,7 @@ from homeassistant.const import (
 PLATFORMS: list[Platform] = [Platform.SWITCH]
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
-    hass.data[DOMAIN] = entry.data['name']
+    hass.data[DOMAIN] = {entry.data['name']: {}}
 
     device_registry = dr.async_get(hass)
 
