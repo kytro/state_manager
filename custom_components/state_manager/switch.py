@@ -1,5 +1,6 @@
 from homeassistant.helpers.entity import Entity
 from homeassistant.components.switch import SwitchEntity
+import logging
 
 _LOGGER = logging.getLogger(__name__)
 
