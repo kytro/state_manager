@@ -12,9 +12,7 @@ DOMAIN = "state_manager"
 CONFIG_SCHEMA = vol.Schema(
     {
         DOMAIN: vol.Schema(
-            {
-                vol.Required(CONF_DEVICES): cv.ensure_list,
-            }
+            vol.All(cv.ensure_dict, {cv.string: cv.string}),
         )
     },
     extra=vol.ALLOW_EXTRA,
@@ -27,7 +25,7 @@ class StateManager:
 
 def setup(hass, config):
     """Set up the state_manager component."""
-    devices = config[DOMAIN][CONF_DEVICES]
+    devices = config[DOMAIN]
 
     if DOMAIN not in hass.data:
         hass.data[DOMAIN] = {}
