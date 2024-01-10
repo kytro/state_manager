@@ -24,6 +24,8 @@ CONFIG_SCHEMA = vol.Schema(
 
 async def async_setup(hass, config):
     """Set up the State Manager component."""
+    _LOGGER.info("Setting up the State Manager component")
+
     hass.data[DOMAIN] = {}  # Initialize hass.data[DOMAIN] as a dictionary
 
     for name, data in config[DOMAIN].items():
@@ -35,5 +37,7 @@ async def async_setup(hass, config):
         switch_entity = switch.create_switch_entity(hass, switch_name, unique_id)
 
         hass.data[DOMAIN][unique_id] = switch_entity
+        _LOGGER.info(f"Created switch entity: {switch_name} with unique_id: {unique_id}")
 
     return True
+
