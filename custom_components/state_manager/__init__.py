@@ -12,7 +12,7 @@ DOMAIN = "state_manager"
 CONFIG_SCHEMA = vol.Schema(
     {
         DOMAIN: vol.Schema(
-            vol.All(cv.ensure_dict, {cv.string: cv.string}),
+            vol.All(dict, {cv.string: cv.string}),
         )
     },
     extra=vol.ALLOW_EXTRA,
