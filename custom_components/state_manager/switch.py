@@ -1,36 +1,39 @@
-import voluptuous as vol
-from homeassistant.components.switch import (
-    DOMAIN as SWITCH_DOMAIN,
-    SwitchDeviceClass,
-    SwitchEntity,
-)
+from homeassistant.helpers.entity import Entity
 
-from .const import DOMAIN
+def create_switch_entity(hass, name, unique_id):
+    """Creates a State Manager switch entity."""
+    return StateManagerSwitch(hass, name, unique_id)
 
-class StateManagerEnabled(SwitchEntity):
+class StateManagerSwitch(Entity):
+    """Representation of a State Manager switch."""
 
-    def __init__(self, hass, device):
-        self._attr_name = f"{device.name} Enabled"
-        self._attr_unique_id = f"{DOMAIN}_{device.id}"
-        self._attr_device_info = {
-            "identifiers": {(DOMAIN, (device.id,))},
-            "name": device.name,
-            "manufacturer": device.manufacturer,
-            "model": device.model,
-            "sw_version": device.sw_version,
-            "via_device": (DOMAIN, device.id),
-        }
-        self._attr_icon = "mdi:toggle-switch"  # Replace with desired icon
-        self._attr_is_on = False
-        self.device = device
+    def __init__(self, hass, name, unique_id):
+        """Initialize the State Manager switch."""
+        self._name = name
+        self._unique_id = unique_id
+        self._is_on = False
 
-    def turn_on(self, **kwargs):
-        self._attr_is_on = True
-        self.async_write_ha_state()
+    @property
+    def name(self):
+        """Return the name of the switch."""
+        return self._name
 
-    def turn_off(self, **kwargs):
-        self._attr_is_on = False
-        self.async_write_ha_state()
+    @property
+    def unique_id(self):
+        """Return the unique ID of the switch."""
+        return self._unique_id
 
-    def configure_entity(self, hass, config_entry, options=None):
-        # ... additional configuration based on options (optional) ...
+    @property
+    def is_on(self):
+        """Return the state of the switch."""
+        return self._is_on
+
+    async def async_turn_on(self, **kwargs):
+        """Turn the switch on."""
+        self._is_on = True
+        await self.async_update_ha_state()
+
+    async def async_turn_off(self, **kwargs):
+        """Turn the switch off."""
+        self._is_on = False
+        await self.async_update_ha_state()

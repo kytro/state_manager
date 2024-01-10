@@ -1,33 +1,39 @@
-from homeassistant.helpers import device_registry as dr
 from .const import DOMAIN
-from .switch import StateManagerEnabled
-from homeassistant.core import HomeAssistant
-from homeassistant.config_entries import ConfigEntry
+import logging
+import voluptuous as vol
 
-from homeassistant.const import (
-    Platform,
+from homeassistant.helpers.config_validation import (  # Updated import
+    PLATFORM_SCHEMA,
+    PLATFORM_SCHEMA_BASE,
+)
+from homeassistant.helpers.entity import Entity
+from . import switch
+
+_LOGGER = logging.getLogger(__name__)
+
+DOMAIN = "state_manager"
+
+PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(  # Use PLATFORM_SCHEMA for validation
+    {
+        vol.Required("name"): vol.All(str, vol.Length(min=1)),
+        vol.Required("unique_id"): str,
+    }
 )
 
-PLATFORMS: list[Platform] = [Platform.SWITCH]
+async def async_setup(hass, config):
+    """Set up the State Manager component."""
+    hass.data[DOMAIN] = {}
+    return True
 
-async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
-    hass.data[DOMAIN] = {entry.data['name']: {}}
+async def async_setup_entry(hass, entry):
+    """Set up State Manager from a config entry."""
+    name = entry.data["name"]
+    unique_id = entry.data["unique_id"]
 
-    device_registry = dr.async_get(hass)
+    # Create the switch entity using the function from switch.py
+    switch_entity = switch.create_switch_entity(hass, name, unique_id)
 
-    device = device_registry.async_get_or_create(
-        config_entry_id=entry.entry_id,
-        identifiers={(DOMAIN, (entry.entry_id, "_device"))},
-        name=entry.data['name'],
-        manufacturer="Your Device Manufacturer",
-        model="Your Device Model",
-        sw_version="Your Device Software Version"
-    )
-
-    hass.data.setdefault(DOMAIN, {})[entry.entry_id] = {
-        "devices": device
-        }
-
-    await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
+    hass.data[DOMAIN][unique_id] = switch_entity
+    hass.async_create_task(hass.config_entries.async_forward_entry_setup(entry, "switch"))
 
     return True
