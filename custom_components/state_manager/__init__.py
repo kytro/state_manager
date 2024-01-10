@@ -20,19 +20,14 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(  # Use PLATFORM_SCHEMA for validation
 
 async def async_setup(hass, config):
     """Set up the State Manager component."""
-    hass.data[DOMAIN] = {}
-    return True
-
-async def async_setup_entry(hass, entry):
-    """Set up State Manager from a config entry."""
-    for state_manager in entry.data:
-        name = state_manager["name"]
-        unique_id = state_manager["unique_id"]
+    for name, data in config[DOMAIN].items():
+        unique_id = data["unique_id"]
 
         # Create the switch entity using the function from switch.py
         switch_entity = switch.create_switch_entity(hass, name, unique_id)
 
         hass.data[DOMAIN][unique_id] = switch_entity
-        hass.async_create_task(hass.config_entries.async_forward_entry_setup(entry, "switch"))
 
     return True
+
+
