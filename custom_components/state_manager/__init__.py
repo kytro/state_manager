@@ -31,7 +31,7 @@ async def async_setup(hass, config):
     for name, data in config[DOMAIN].items():
         # Append '_enabled' to the name
         switch_name = name + "_enabled"
-        unique_id = data["unique_id"]
+        unique_id = data["unique_id"] + "_enabled"
 
         # Create the switch entity using the function from switch.py
         switch_entity = switch.create_switch_entity(hass, switch_name, unique_id)

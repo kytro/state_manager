@@ -52,7 +52,7 @@ async def async_setup_platform(hass, config, async_add_entities, discovery_info=
     for name, data in config.items():
         # Append '_enabled' to the name
         switch_name = name + "_enabled"
-        unique_id = data["unique_id"]
+        unique_id = data["unique_id"] + "_enabled"
 
         # Create the switch entity
         switch_entity = create_switch_entity(hass, switch_name, unique_id)
