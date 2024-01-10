@@ -11,8 +11,6 @@ from . import switch
 
 _LOGGER = logging.getLogger(__name__)
 
-DOMAIN = "state_manager"
-
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(  # Use PLATFORM_SCHEMA for validation
     {
         vol.Required("name"): vol.All(str, vol.Length(min=1)),
@@ -27,13 +25,14 @@ async def async_setup(hass, config):
 
 async def async_setup_entry(hass, entry):
     """Set up State Manager from a config entry."""
-    name = entry.data["name"]
-    unique_id = entry.data["unique_id"]
+    for state_manager in entry.data:
+        name = state_manager["name"]
+        unique_id = state_manager["unique_id"]
 
-    # Create the switch entity using the function from switch.py
-    switch_entity = switch.create_switch_entity(hass, name, unique_id)
+        # Create the switch entity using the function from switch.py
+        switch_entity = switch.create_switch_entity(hass, name, unique_id)
 
-    hass.data[DOMAIN][unique_id] = switch_entity
-    hass.async_create_task(hass.config_entries.async_forward_entry_setup(entry, "switch"))
+        hass.data[DOMAIN][unique_id] = switch_entity
+        hass.async_create_task(hass.config_entries.async_forward_entry_setup(entry, "switch"))
 
     return True
