@@ -1,4 +1,5 @@
 from homeassistant.helpers.entity import Entity
+from homeassistant.helpers.entity_platform import async_add_entities
 
 def create_switch_entity(hass, name, unique_id):
     """Creates a State Manager switch entity."""
@@ -37,3 +38,18 @@ class StateManagerSwitch(Entity):
         """Turn the switch off."""
         self._is_on = False
         await self.async_update_ha_state()
+
+async def async_setup_platform(hass, config, async_add_entities, discovery_info=None):
+    """Set up the switch platform."""
+    switches = []
+    for name, data in config.items():
+        # Append '_enabled' to the name and unique_id
+        switch_name = name + "_enabled"
+        unique_id = data["unique_id"] + "_enabled"
+
+        # Create the switch entity
+        switch_entity = create_switch_entity(hass, switch_name, unique_id)
+
+        switches.append(switch_entity)
+
+    async_add_entities(switches, True)

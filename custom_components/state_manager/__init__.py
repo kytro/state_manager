@@ -36,13 +36,4 @@ async def async_setup(hass, config):
 
         hass.data[DOMAIN][unique_id] = switch_entity
 
-        # Add the switch to HA
-        hass.async_create_task(
-            hass.helpers.entity_component.async_add_entities([switch_entity])
-        )
-
     return True
-
-
-
-
