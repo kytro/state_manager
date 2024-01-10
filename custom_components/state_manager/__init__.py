@@ -4,6 +4,7 @@ import voluptuous as vol
 from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers.entity import Entity
 from . import switch
+from homeassistant.helpers.discovery import async_load_platform
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -38,6 +39,11 @@ async def async_setup(hass, config):
 
         hass.data[DOMAIN][unique_id] = switch_entity
         _LOGGER.info(f"Created switch entity: {switch_name} with unique_id: {unique_id}")
+        
+    # Load the switch platform
+    hass.async_create_task(
+        async_load_platform(hass, "switch", DOMAIN, {}, config)
+    )
 
     return True
 
