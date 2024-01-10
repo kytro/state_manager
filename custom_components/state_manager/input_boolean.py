@@ -1,27 +1,47 @@
-"""Platform for input_boolean integration."""
 from homeassistant.components.input_boolean import InputBoolean
 
 def setup_platform(hass, config, add_entities, discovery_info=None):
-    """Set up the input_boolean platform."""
-    entities = []
-    for name in discovery_info:
-        entities.append(StateManagerInputBoolean(name))
-    add_entities(entities, True)
+    print(f"Discovery info: {discovery_info}")
+    manager = discovery_info.get("manager")
+    add_entities([StateInputBoolean(manager)])
 
-class StateManagerInputBoolean(InputBoolean):
-    """Representation of a State Manager Input Boolean."""
+class StateInputBoolean(InputBoolean):
+    def __init__(self, manager):
+        self.manager = manager
+        self._state = False  # Initial state off
 
-    def __init__(self, name):
-        """Initialize the State Manager Input Boolean."""
-        self._name = name + "_enabled"
-        self._state = False
+    @property
+    def unique_id(self):
+        """Return the unique ID of the input_boolean."""
+        return f"{self.manager.unique_id}_input_boolean"
 
     @property
     def name(self):
-        """Return the name of the input boolean."""
-        return self._name
+        """Return the name of the input_boolean."""
+        return f"{self.manager.name} Input Boolean"
 
     @property
     def is_on(self):
-        """Return true if the input boolean is enabled."""
+        """Return the current state of the input_boolean."""
         return self._state
+
+    def turn_on(self, **kwargs):
+        """Turn the input_boolean on."""
+        self._state = True
+        # Update state manager based on turn on
+        self.manager.on_turn_on()
+
+        self.schedule_update_ha_state()
+
+    def turn_off(self, **kwargs):
+        """Turn the input_boolean off."""
+        self._state = False
+        # Update state manager based on turn off
+        self.manager.on_turn_off()
+
+        self.schedule_update_ha_state()
+
+    def update(self):
+        """Update the state of the input_boolean."""
+        self._state = self.manager.is_enabled()
+        self.schedule_update_ha_state()
