@@ -27,9 +27,9 @@ async def async_setup(hass, config):
     hass.data[DOMAIN] = {}  # Initialize hass.data[DOMAIN] as a dictionary
 
     for name, data in config[DOMAIN].items():
-        # Append '_enabled' to the name and unique_id
+        # Append '_enabled' to the name
         switch_name = name + "_enabled"
-        unique_id = data["unique_id"] + "_enabled"
+        unique_id = data["unique_id"]
 
         # Create the switch entity using the function from switch.py
         switch_entity = switch.create_switch_entity(hass, switch_name, unique_id)
