@@ -7,6 +7,10 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
     _LOGGER.info("Setting up platform: input_boolean")
     _LOGGER.info(f"Discovery info: {discovery_info}")
     manager = discovery_info.get("manager")
+    if manager is None:
+        _LOGGER.error("Manager is None")
+    else:
+        _LOGGER.info("Manager is not None")
     add_entities([StateInputBoolean(manager)])
 
 class StateInputBoolean(InputBoolean):
