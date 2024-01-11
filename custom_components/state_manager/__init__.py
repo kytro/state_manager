@@ -1,14 +1,10 @@
-from homeassistant.components.input_boolean import async_setup as async_setup_input_boolean
+from homeassistant.components.input_boolean import InputBoolean
 from .const import DOMAIN
 
 async def async_setup(hass, config):
 
-    input_boolean_config = {
-        "unique_id": "porch_light_managed_enabled",
-        "name": "Porch Light Managed Enabled",
-        "initial": True,
-    }
+    input_boolean = InputBoolean("porch_light_managed_enabled", "Porch Light Managed Enabled", initial=True)
     
-    await async_setup_input_boolean(hass, input_boolean_config)    
+    hass.async_create_task(hass.helpers.entity_component.async_add_entities([input_boolean]))   
 
     return True
