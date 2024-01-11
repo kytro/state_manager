@@ -11,10 +11,12 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
         _LOGGER.error("Manager is None")
     else:
         _LOGGER.info("Manager is not None")
-    add_entities([StateInputBoolean(manager)])
+        _LOGGER.info("Adding entities")
+        add_entities([StateInputBoolean(manager)])
 
 class StateInputBoolean(InputBoolean):
     def __init__(self, manager):
+        _LOGGER.info("Initializing StateInputBoolean")
         self.manager = manager
         self._state = False  # Initial state off
 
