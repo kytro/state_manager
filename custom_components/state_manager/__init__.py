@@ -29,17 +29,18 @@ class StateManager:
 
 def setup(hass, config):
     """Set up the state_manager component."""
+    _LOGGER.info("Setting up the state_manager component.")
     devices = config[DOMAIN]
 
     if DOMAIN not in hass.data:
         hass.data[DOMAIN] = {}
 
     for unique_id, device_config in devices.items():
-        """Adding device: {unique_id}..."""
         _LOGGER.info("Adding device: %s...", unique_id)
         name = device_config[CONF_NAME]
         manager = StateManager(name, unique_id)
         hass.data[DOMAIN][unique_id] = manager
+        _LOGGER.info("Loading platform: input_boolean")
         discovery.load_platform(
             hass,
             "input_boolean",
