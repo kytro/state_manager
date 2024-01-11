@@ -4,7 +4,8 @@ from .const import DOMAIN
 async def async_setup(hass, config):
 
     input_boolean_config = {
-        "name": "My Input Boolean",
+        "unique_id": "porch_light_managed_enabled",
+        "name": "Porch Light Managed Enabled",
         "initial": True,
     }
     
