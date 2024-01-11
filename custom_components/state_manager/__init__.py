@@ -1,52 +1,40 @@
 import logging
-from homeassistant.helpers import discovery
-import voluptuous as vol
-import homeassistant.helpers.config_validation as cv
-
-from homeassistant.const import CONF_DEVICES, CONF_NAME
+from homeassistant.components.input_boolean import InputBoolean
 
 _LOGGER = logging.getLogger(__name__)
 
-DOMAIN = "state_manager"
+def setup_platform(hass, config, add_entities, discovery_info=None):
+    """Set up the State Manager platform."""
+    add_entities([StateManager(config.get('name'))])
 
-DEVICE_SCHEMA = vol.Schema({
-    vol.Required(CONF_NAME): cv.string,
-})
+class StateManager(InputBoolean):
+    """Representation of a State Manager."""
 
-CONFIG_SCHEMA = vol.Schema(
-    {
-        DOMAIN: vol.Schema(
-            vol.All(dict, {cv.string: DEVICE_SCHEMA}),
-        )
-    },
-    extra=vol.ALLOW_EXTRA,
-)
+    def __init__(self, name):
+        """Initialize the State Manager."""
+        self.entity_id = "input_boolean." + name + "_enabled"
+        self._name = name + "_enabled"
+        self._state = False
+        _LOGGER.info("Initialized input_boolean: %s", self._name)
 
-class StateManager:
-    def __init__(self, name, unique_id):
-        self.name = name
-        self.unique_id = unique_id
+    @property
+    def name(self):
+        """Return the name of the input boolean."""
+        return self._name
 
-def setup(hass, config):
-    """Set up the state_manager component."""
-    _LOGGER.info("Setting up the state_manager component.")
-    devices = config[DOMAIN]
+    @property
+    def is_on(self):
+        """Return true if the input boolean is enabled."""
+        return self._state
 
-    if DOMAIN not in hass.data:
-        hass.data[DOMAIN] = {}
+    def turn_on(self, **kwargs):
+        """Turn the input boolean on."""
+        self._state = True
+        self.schedule_update_ha_state()
+        _LOGGER.info("Turned on input_boolean: %s", self._name)
 
-    for unique_id, device_config in devices.items():
-        _LOGGER.info("Adding device: %s...", unique_id)
-        name = device_config[CONF_NAME]
-        manager = StateManager(name, unique_id)
-        hass.data[DOMAIN][unique_id] = manager
-        _LOGGER.info("Loading platform: input_boolean")
-        discovery.load_platform(
-            hass,
-            "input_boolean",
-            DOMAIN,
-            {"manager": manager, "device_name": name},
-            config,
-        )
-
-    return True
+    def turn_off(self, **kwargs):
+        """Turn the input boolean off."""
+        self._state = False
+        self.schedule_update_ha_state()
+        _LOGGER.info("Turned off input_boolean: %s", self._name)
