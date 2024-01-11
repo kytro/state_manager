@@ -1,40 +1,38 @@
 import logging
-from homeassistant.components.input_boolean import InputBoolean
+
+from homeassistant.components.input_boolean import (
+    DOMAIN as INPUT_BOOLEAN_DOMAIN,
+    InputBoolean,
+)
+from homeassistant.config_entries import ConfigEntry
+from homeassistant.core import HomeAssistant
+from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 _LOGGER = logging.getLogger(__name__)
 
-def setup_platform(hass, config, add_entities, discovery_info=None):
-    """Set up the State Manager platform."""
-    add_entities([StateManager(config.get('name'))])
+async
+ 
+def
+ 
+async_setup_entry(
+    hass: HomeAssistant,
+    config_entry: ConfigEntry,
+    async_add_entities: AddEntitiesCallback,
+) -> None:
 
-class StateManager(InputBoolean):
-    """Representation of a State Manager."""
+    
+"""Set up state_manager from a config entry."""
+    name = config_entry.data["name"]
+    enabled_name = f"{name}_enabled"
 
-    def __init__(self, name):
-        """Initialize the State Manager."""
-        self.entity_id = "input_boolean." + name + "_enabled"
-        self._name = name + "_enabled"
-        self._state = False
-        _LOGGER.info("Initialized input_boolean: %s", self._name)
+    input_boolean = InputBoolean(enabled_name, f"{name} Enabled")
+    await input_boolean.async_add_to_hass(hass)
 
-    @property
-    def name(self):
-        """Return the name of the input boolean."""
-        return self._name
+    async_add_entities([input_boolean])
 
-    @property
-    def is_on(self):
-        """Return true if the input boolean is enabled."""
-        return self._state
+    _LOGGER.info("State Manager input boolean '%s' created", enabled_name)
 
-    def turn_on(self, **kwargs):
-        """Turn the input boolean on."""
-        self._state = True
-        self.schedule_update_ha_state()
-        _LOGGER.info("Turned on input_boolean: %s", self._name)
 
-    def turn_off(self, **kwargs):
-        """Turn the input boolean off."""
-        self._state = False
-        self.schedule_update_ha_state()
-        _LOGGER.info("Turned off input_boolean: %s", self._name)
+async def async_unload_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> bool:
+    """Unload a config entry."""
+    return True
