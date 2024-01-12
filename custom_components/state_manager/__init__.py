@@ -4,8 +4,11 @@ import voluptuous as vol
 from homeassistant.const import CONF_FRIENDLY_NAME
 from homeassistant.components.input_boolean import DOMAIN as INPUT_BOOLEAN, InputBoolean
 from homeassistant.helpers.entity_platform import async_get_platforms
+from homeassistant.util import slugify
 
 DOMAIN = "state_manager"
+
+CONFIG_INPUT_BOOLEAN = {}
 
 ENTITY_SCHEMA = vol.Schema(
     {
@@ -40,7 +43,24 @@ async def async_setup(hass, config):
 
     # Create the input_boolean for each entity in the configuration
     for entity_id, entity_conf in conf.items():
-        entity = InputBoolean(f"{entity_id}_enabled")
-        platform.async_add_entities([entity])
+        await create_input_boolean(f"{entity_id}_enabled")
 
     return True
+
+
+async def create_input_boolean(name: str, icon=None) -> str:
+    data = {
+        'name': name
+    }
+
+    if icon:
+        data['icon'] = icon
+
+    internal_name = slugify(name)
+
+    CONFIG_INPUT_BOOLEAN[internal_name] = data
+
+    global CUSTOM_INPUT_BOOLEAN
+    CUSTOM_INPUT_BOOLEAN = True
+
+    return 'input_boolean.{}'.format(internal_name)
