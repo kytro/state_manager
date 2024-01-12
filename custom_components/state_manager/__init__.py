@@ -30,4 +30,4 @@ async def async_setup_entry(hass, entry):
 
 
 async def async_unload_entry(hass, entry):
-    return await hass.data[DOMAIN].async_unload_entry(entry
+    return await hass.data[DOMAIN].async_unload_entry(entry)
