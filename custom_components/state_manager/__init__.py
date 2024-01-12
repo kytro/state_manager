@@ -40,7 +40,7 @@ async def async_setup(hass, config):
 
     # Create the input_boolean for each entity in the configuration
     for entity_id, entity_conf in conf.items():
-        entity = InputBoolean(f"{entity_id}_enabled", entity_conf.get(CONF_FRIENDLY_NAME, entity_id))
+        entity = InputBoolean(f"{entity_id}_enabled")
         platform.async_add_entities([entity])
 
     return True
