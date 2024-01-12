@@ -2,11 +2,15 @@
 import homeassistant.helpers.config_validation as cv
 import voluptuous as vol
 from homeassistant.const import CONF_FRIENDLY_NAME
-from homeassistant.components.input_boolean import DOMAIN as INPUT_BOOLEAN, InputBoolean
+from homeassistant.components.input_boolean import DOMAIN as INPUT_BOOLEAN
 from homeassistant.helpers.entity_platform import async_get_platforms
 from homeassistant.util import slugify
+from homeassistant.components.input_boolean import async_setup as setup_input_boolean
+
 
 DOMAIN = "state_manager"
+
+COMPONENT_INPUT_BOOLEAN = 'input_boolean'
 
 CONFIG_INPUT_BOOLEAN = {}
 
@@ -44,6 +48,8 @@ async def async_setup(hass, config):
     # Create the input_boolean for each entity in the configuration
     for entity_id, entity_conf in conf.items():
         await create_input_boolean(f"{entity_id}_enabled")
+
+    await setup_input_boolean(hass, {COMPONENT_INPUT_BOOLEAN: CONFIG_INPUT_BOOLEAN})
 
     return True
 
