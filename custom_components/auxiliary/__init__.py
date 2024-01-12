@@ -1,4 +1,4 @@
-rom logging import getLogger
+from logging import getLogger
 
 from voluptuous import Required, Schema
 
