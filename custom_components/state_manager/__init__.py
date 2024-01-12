@@ -1,43 +1,34 @@
-import logging
-from asyncio import async_create_task
+"""The state_manager component."""
+import homeassistant.helpers.config_validation as cv
+import voluptuous as vol
+from homeassistant.const import CONF_NAME
+from homeassistant.components.input_boolean import DOMAIN as INPUT_BOOLEAN
 
-from .const import DOMAIN
+DOMAIN = "state_manager"
 
-_LOGGER = logging.getLogger(__name__)
+CONFIG_SCHEMA = vol.Schema(
+    {
+        DOMAIN: vol.Schema(
+            {
+                vol.Required(CONF_NAME): cv.string,
+            }
+        )
+    },
+    extra=vol.ALLOW_EXTRA,
+)
 
 async def async_setup(hass, config):
-    _LOGGER.info("Setting up Porch Light Manager component")
+    """Set up the state_manager component."""
+    conf = config[DOMAIN]
 
-    try:
-        await async_create_task(hass.components.frontend.async_register_built_in_panel(
-            "iframe",
-            "porch_light_manager",
-            "Porch Light Manager",
-            "/api/hassio/app/entrypoint.js",
-            {"entrypoint": "entrypoint.js"},
-        ))
+    # Ensure the platform is loaded
+    hass.async_create_task(
+        hass.helpers.discovery.async_load_platform(INPUT_BOOLEAN, DOMAIN, {}, config)
+    )
 
-        await async_create_task( hass.services.async_register(DOMAIN, "set_porch_light_manager_enabled", set_porch_light_manager_enabled))
+    # Create the input_boolean
+    hass.states.async_set(
+        f"{INPUT_BOOLEAN}.{conf[CONF_NAME]}", "off", {"friendly_name": conf[CONF_NAME]}
+    )
 
-        # Create the input boolean entity
-        hass.states.async_set("input_boolean.porch_light_manager_enabled", "off")
-        _LOGGER.info("Input boolean 'porch_light_manager_enabled' created successfully")
-
-        return True
-
-    except Exception as e:
-        _LOGGER.error("Failed to set up Porch Light Manager component: %s", e)
-        return False
-    
-async def set_porch_light_manager_enabled(call):
-    """Service to set the porch light manager enabled state."""
-    # Get the desired state from the service call data
-    enabled = call.data.get("enabled", True)
-
-    try:
-        # Set the input boolean state
-        hass.states.async_set("input_boolean.porch_light_manager_enabled", str(enabled))
-
-        _LOGGER.info("Porch light manager enabled state set to: %s", enabled)
-    except Exception as e:
-        _LOGGER.error("Failed to set porch light manager enabled state: %s", e)
+    return True
