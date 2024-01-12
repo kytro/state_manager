@@ -1,14 +1,13 @@
 """The state_manager component."""
 import homeassistant.helpers.config_validation as cv
 import voluptuous as vol
-from homeassistant.const import CONF_NAME, CONF_FRIENDLY_NAME
+from homeassistant.const import CONF_FRIENDLY_NAME
 from homeassistant.components.input_boolean import DOMAIN as INPUT_BOOLEAN
 
 DOMAIN = "state_manager"
 
 ENTITY_SCHEMA = vol.Schema(
     {
-        vol.Required(CONF_NAME): cv.string,
         vol.Optional(CONF_FRIENDLY_NAME): cv.string,
     }
 )
@@ -21,6 +20,15 @@ CONFIG_SCHEMA = vol.Schema(
     },
     extra=vol.ALLOW_EXTRA,
 )
+
+async def async_setup(hass, config):
+    """Set up the state_manager component."""
+    conf = config[DOMAIN]
+
+    # Ensure the platform is loaded
+    hass.async_create_task(
+        hass.helpers.discovery.async_load_platform(INPUT_BOOLEAN, DOMAIN, {}, config)
+    )
 
 async def async_setup(hass, config):
     """Set up the state_manager component."""
