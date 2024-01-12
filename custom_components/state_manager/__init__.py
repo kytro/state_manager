@@ -2,7 +2,8 @@
 import homeassistant.helpers.config_validation as cv
 import voluptuous as vol
 from homeassistant.const import CONF_FRIENDLY_NAME
-from homeassistant.components.input_boolean import DOMAIN as INPUT_BOOLEAN
+from homeassistant.components.input_boolean import DOMAIN as INPUT_BOOLEAN, InputBoolean
+from homeassistant.helpers.entity_platform import async_get_platforms
 
 DOMAIN = "state_manager"
 
@@ -30,13 +31,16 @@ async def async_setup(hass, config):
         hass.helpers.discovery.async_load_platform(INPUT_BOOLEAN, DOMAIN, {}, config)
     )
 
+    # Get the input_boolean platform
+    platform = None
+    for p in async_get_platforms(hass, INPUT_BOOLEAN):
+        if p.domain == INPUT_BOOLEAN:
+            platform = p
+            break
+
     # Create the input_boolean for each entity in the configuration
     for entity_id, entity_conf in conf.items():
-        await hass.services.async_call(
-            INPUT_BOOLEAN,
-            "toggle",
-            {"entity_id": f"{INPUT_BOOLEAN}.{entity_id}_enabled"},
-            blocking=True,
-        )
+        entity = InputBoolean(f"{entity_id}_enabled", entity_conf.get(CONF_FRIENDLY_NAME, entity_id))
+        platform.async_add_entities([entity])
 
     return True
