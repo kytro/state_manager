@@ -126,8 +126,8 @@ async def create_automation_for_notification_action(name: str):
         ],
         'action': [
             {
-                'service': 'reminder.done',
-                'entity_id': 'reminder.{}'.format(internal_name)
+                'service': 'state_manager.done',
+                'entity_id': 'state_manager.{}'.format(internal_name)
             }
         ],
         'mode': 'single',
